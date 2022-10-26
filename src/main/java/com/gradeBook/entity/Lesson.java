@@ -4,7 +4,7 @@ import javax.persistence.*;
 import java.util.Set;
 
 @Entity
-@Table(name = "LESSSON")
+@Table(name = "LESSON")
 public class Lesson {
     @Id
     @GeneratedValue
@@ -16,6 +16,9 @@ public class Lesson {
     @ManyToOne
     @JoinColumn(name="FK_CLAZZ_OID")
     private Clazz clazz;
+    @ManyToOne
+    @JoinColumn(name="FK_SUBJECT_OID")
+    private Subject subject;
     @OneToMany(mappedBy = "lesson")
     private Set<Mark> marks;
 }

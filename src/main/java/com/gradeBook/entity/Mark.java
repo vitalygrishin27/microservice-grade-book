@@ -17,7 +17,4 @@ public class Mark {
     @ManyToOne
     @JoinColumn(name="FK_LESSON_OID")
     private Lesson lesson;
-    @ManyToOne
-    @JoinColumn(name="FK_TEACHER_OID")
-    private Teacher teacher;
 }

@@ -14,6 +14,4 @@ public class Teacher extends User {
     Set<Clazz> classes;
     @OneToMany(mappedBy = "teacher")
     private Set<Lesson> lessons;
-    @OneToMany(mappedBy = "teacher")
-    private Set<Mark> marks;
 }

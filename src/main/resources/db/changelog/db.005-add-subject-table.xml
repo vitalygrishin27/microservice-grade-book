@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd"
+>
+    <changeSet id="005" author="Vitaliy H.">
+        <sql stripComments="true">
+            <comment>create subject table</comment>
+            CREATE TABLE `subject`
+            (
+                `oid`  bigint(20) NOT NULL,
+                `name` varchar(255) DEFAULT NULL
+            );
+            ALTER TABLE `subject`
+                ADD PRIMARY KEY (`oid`);
+
+            ALTER TABLE `lesson`
+                ADD COLUMN `fk_subject_oid` varchar(255) NOT NULL,
+                ADD KEY `FKli719dfayl6yctw3t2faj4cr7` (`fk_subject_oid`);
+        </sql>
+    </changeSet>
+</databaseChangeLog>

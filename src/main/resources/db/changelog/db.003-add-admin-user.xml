@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd"
+>
+    <changeSet id="002" author="Vitaliy H.">
+        <sql stripComments="true">
+            <comment>insert access levels</comment>
+            Insert into user_data
+                (OID, FIRST_NAME, SECOND_NAME, LAST_NAME, LOGIN, PASSWORD,FK_ACCESS_LEVEL_OID)
+            Values (0, 'Admin', 'Admin', 'Admin', 'admin', 'YWRtaW4=', 0);
+            Insert into watcher
+                (OID)
+            Values (0);
+        </sql>
+    </changeSet>
+</databaseChangeLog>

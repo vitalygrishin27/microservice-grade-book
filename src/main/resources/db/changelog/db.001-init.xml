@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd"
+>
+    <changeSet id="001" author="Vitaliy H.">
+        <sql stripComments="true">
+            <comment>init DB</comment>
+            CREATE TABLE `access_level`
+            (
+                `oid`         bigint(20) NOT NULL,
+                `description` varchar(255) DEFAULT NULL,
+                `level`       varchar(255) DEFAULT NULL,
+                `name`        varchar(255) DEFAULT NULL
+            );
+            CREATE TABLE `clazz`
+            (
+                `oid`                        bigint(20) NOT NULL,
+                `name`                       varchar(255) DEFAULT NULL,
+                `fk_teacher_form_master_oid` bigint(20) DEFAULT NULL
+            );
+            CREATE TABLE `clazz_teachers`
+            (
+                `teacher_oid` bigint(20) NOT NULL,
+                `clazz_oid`   bigint(20) NOT NULL
+            );
+            CREATE TABLE `lesson`
+            (
+                `oid`            bigint(20) NOT NULL,
+                `name`           varchar(255) DEFAULT NULL,
+                `fk_clazz_oid`   bigint(20) DEFAULT NULL,
+                `fk_teacher_oid` bigint(20) DEFAULT NULL
+            );
+            CREATE TABLE `mark`
+            (
+                `oid`             bigint(20) NOT NULL,
+                `local_date_time` datetime DEFAULT NULL,
+                `value`           int(11) DEFAULT NULL,
+                `fk_lesson_oid`   bigint(20) DEFAULT NULL,
+                `fk_pupil_oid`    bigint(20) DEFAULT NULL
+            );
+            CREATE TABLE `pupil`
+            (
+                `oid`          bigint(20) NOT NULL,
+                `fk_clazz_oid` bigint(20) DEFAULT NULL
+            );
+            CREATE TABLE `teacher`
+            (
+                `oid` bigint(20) NOT NULL
+            );
+            CREATE TABLE `token`
+            (
+                `oid`                 bigint(20) NOT NULL,
+                `token`               varchar(255) DEFAULT NULL,
+                `valid_to`            datetime     DEFAULT NULL,
+                `fk_user_oid`         bigint(20) DEFAULT NULL
+            );
+            CREATE TABLE `user_data`
+            (
+                `oid`         bigint(20) NOT NULL,
+                `first_name`  varchar(255) DEFAULT NULL,
+                `last_name`   varchar(255) DEFAULT NULL,
+                `second_name` varchar(255) DEFAULT NULL,
+                `login` varchar(255) DEFAULT NULL,
+                `password` varchar(255) DEFAULT NULL,
+                `fk_access_level_oid` bigint(20) DEFAULT NULL
+            );
+            CREATE TABLE `watcher`
+            (
+                `oid`          bigint(20) NOT NULL,
+                `fk_pupil_oid` bigint(20) DEFAULT NULL
+            );
+            ALTER TABLE `access_level`
+                ADD PRIMARY KEY (`oid`);
+            ALTER TABLE `clazz`
+                ADD PRIMARY KEY (`oid`),
+  ADD KEY `FKcbiakyv7wfqkta14udex3lc9y` (`fk_teacher_form_master_oid`);
+            ALTER TABLE `clazz_teachers`
+                ADD PRIMARY KEY (`teacher_oid`, `clazz_oid`),
+  ADD KEY `FKd90vbdh7cyxiu3kx0wunth0wp` (`clazz_oid`);
+            ALTER TABLE `lesson`
+                ADD PRIMARY KEY (`oid`),
+  ADD KEY `FKiee36qxpu0o0ehck2f5fk9h0g` (`fk_clazz_oid`),
+  ADD KEY `FK9u8n03wvq9u337aoitgivpws8` (`fk_teacher_oid`);
+            ALTER TABLE `mark`
+                ADD PRIMARY KEY (`oid`),
+  ADD KEY `FKli7m9dfayl6yctw3t2faj4cr7` (`fk_lesson_oid`),
+  ADD KEY `FKnnnysoxfyju39rsxp994olg0a` (`fk_pupil_oid`);
+            ALTER TABLE `pupil`
+                ADD PRIMARY KEY (`oid`),
+  ADD KEY `FK6mhymsvdhwkj2j8158t82brmm` (`fk_clazz_oid`);
+            ALTER TABLE `teacher`
+                ADD PRIMARY KEY (`oid`);
+            ALTER TABLE `token`
+                ADD PRIMARY KEY (`oid`),
+  ADD KEY `FKl8piohq2jbsp85rfhb4jld4c1` (`fk_user_oid`);
+            ALTER TABLE `user_data`
+                ADD PRIMARY KEY (`oid`),
+  ADD KEY `FKnwql4jkjrqlej9locp545rl3r` (`fk_access_level_oid`);
+            ALTER TABLE `watcher`
+                ADD PRIMARY KEY (`oid`),
+  ADD KEY `FKosu5dotch69lsfbcox3lekw3i` (`fk_pupil_oid`);
+            COMMIT;
+        </sql>
+    </changeSet>
+</databaseChangeLog>

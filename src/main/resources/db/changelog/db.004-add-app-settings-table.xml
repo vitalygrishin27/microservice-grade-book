@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd"
+>
+    <changeSet id="002" author="Vitaliy H.">
+        <sql stripComments="true">
+            <comment>create app setting table</comment>
+            CREATE TABLE `app_settings`
+            (
+                `oid`         bigint(20) NOT NULL,
+                `description` varchar(255) DEFAULT NULL,
+                `value`       varchar(255) DEFAULT NULL,
+                `name`        varchar(255) DEFAULT NULL
+            );
+            ALTER TABLE `app_settings`
+                ADD PRIMARY KEY (`oid`);
+        </sql>
+    </changeSet>
+</databaseChangeLog>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd"
+>
+    <include file="db.001-init.xml" relativeToChangelogFile="true"/>
+    <include file="db.002-add-access-levels.xml" relativeToChangelogFile="true"/>
+    <include file="db.003-add-admin-user.xml" relativeToChangelogFile="true"/>
+    <include file="db.004-add-app-settings-table.xml" relativeToChangelogFile="true"/>
+    <include file="db.005-add-subject-table.xml" relativeToChangelogFile="true"/>
+</databaseChangeLog>

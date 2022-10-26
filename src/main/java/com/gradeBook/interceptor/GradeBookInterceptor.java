@@ -21,9 +21,11 @@ public class GradeBookInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest requestServlet, HttpServletResponse responseServlet, Object handler) throws Exception {
         Token token = tokenService.findTokenByString(requestServlet.getParameter("token"));
         if (token == null || !token.isValid()) {
+            requestServlet.setAttribute("token", token);
             requestServlet.setAttribute("level", AccessLevel.LEVEL.BASIC);
         } else {
             requestServlet.setAttribute("level", token.getUser().getAccessLevel().getLevel());
+            requestServlet.setAttribute("token", token);
         }
         return true;
     }

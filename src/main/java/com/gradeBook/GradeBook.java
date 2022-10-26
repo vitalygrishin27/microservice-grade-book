@@ -13,8 +13,8 @@ public class GradeBook {
         SpringApplication.run(GradeBook.class, args);
     }
 
-    @PostConstruct
+  /*  @PostConstruct
     public void started() {
-        TimeZone.setDefault(TimeZone.getTimeZone("GMT+2:00"));
-    }
+        TimeZone.setDefault(TimeZone.getTimeZone("+02:00"));
+    }*/
 }

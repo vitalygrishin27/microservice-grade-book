@@ -14,6 +14,7 @@ import com.sun.istack.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -39,6 +40,13 @@ public class UserController {
     @PostMapping("/token")
     public ResponseEntity<Token> createToken(@NotNull @RequestBody Watcher requestedUser) {
         return new ResponseEntity<>(tokenService.create(userService.getUserIfLoginAndPassIsCorrect(requestedUser.getLogin(), requestedUser.getPassword())), HttpStatus.OK);
+    }
+
+    @GetMapping("/token")
+    public ResponseEntity<Token> checkToken(@Nullable @RequestAttribute Token token, @RequestAttribute AccessLevel.LEVEL level) {
+        if (token == null || !token.isValid()) throw new ForbiddenByAccessLevelException();
+        token.setUsername(token.getUser().getLogin());
+        return new ResponseEntity<>(token, HttpStatus.OK);
     }
 
     @GetMapping

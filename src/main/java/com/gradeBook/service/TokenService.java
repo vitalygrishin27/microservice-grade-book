@@ -37,6 +37,7 @@ public class TokenService {
         Token token = new Token();
         token.setToken(generateNewToken());
         token.setUser(user);
+        token.setUsername(user.getLogin());
         token.setValidTo(LocalDateTime.now().plusMinutes(Long.parseLong(appSettingsService.findByName(TOKE_VALID_TIME).getValue())));
         save(token);
         return token;

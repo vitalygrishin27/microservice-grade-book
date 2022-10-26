@@ -23,4 +23,6 @@ public class Token {
     public boolean isValid() {
         return this.validTo.isAfter(LocalDateTime.now());
     }
+    @Transient
+    private String username;
 }

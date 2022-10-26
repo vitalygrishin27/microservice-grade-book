@@ -5,6 +5,6 @@ import org.springframework.http.HttpStatus;
 
 public class ForbiddenByAccessLevelException extends GradeBookException {
     public ForbiddenByAccessLevelException(){
-        super("GBE-ACCESS-001","You access level not allow to request this data.", HttpStatus.FORBIDDEN);
+        super("GBE-ACCESS-001","Your access level not allow to request this data.", HttpStatus.FORBIDDEN);
     }
 }

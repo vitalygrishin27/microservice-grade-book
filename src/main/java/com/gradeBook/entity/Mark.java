@@ -1,10 +1,17 @@
 package com.gradeBook.entity;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "MARK")
+@AllArgsConstructor
+@NoArgsConstructor
+@Data
 public class Mark {
     @Id
     @GeneratedValue

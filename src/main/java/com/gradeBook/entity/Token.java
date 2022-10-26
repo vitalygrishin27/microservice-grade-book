@@ -1,13 +1,17 @@
 package com.gradeBook.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "TOKEN")
+@AllArgsConstructor
+@NoArgsConstructor
 @Data
 public class Token {
 
@@ -24,5 +28,5 @@ public class Token {
         return this.validTo.isAfter(LocalDateTime.now());
     }
     @Transient
-    private String username;
+    private String firstName;
 }

@@ -34,8 +34,6 @@ public class UserController {
 
     private final TokenService tokenService;
     private final UserService userService;
-    private final AccessLevelService accessLevelService;
-    private final TeacherService teacherService;
 
     @PostMapping("/token")
     public ResponseEntity<Token> createToken(@NotNull @RequestBody Watcher requestedUser) {
@@ -45,7 +43,7 @@ public class UserController {
     @GetMapping("/token")
     public ResponseEntity<Token> checkToken(@Nullable @RequestAttribute Token token, @RequestAttribute AccessLevel.LEVEL level) {
         if (token == null || !token.isValid()) throw new ForbiddenByAccessLevelException();
-        token.setUsername(token.getUser().getLogin());
+        token.setFirstName(token.getUser().getFirstName());
         return new ResponseEntity<>(token, HttpStatus.OK);
     }
 

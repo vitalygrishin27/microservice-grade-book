@@ -6,8 +6,6 @@ import com.gradeBook.repository.PupilRepo;
 import com.gradeBook.repository.TeacherRepo;
 import com.gradeBook.repository.UserRepo;
 import com.gradeBook.repository.WatcherRepo;
-import com.gradeBook.service.AccessLevelService;
-import com.gradeBook.service.TeacherService;
 import com.gradeBook.service.TokenService;
 import com.gradeBook.service.UserService;
 import com.sun.istack.NotNull;
@@ -24,7 +22,6 @@ import java.util.List;
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("users")
-
 public class UserController {
 
     private final UserRepo userRepo;

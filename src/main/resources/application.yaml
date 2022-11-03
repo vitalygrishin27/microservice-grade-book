@@ -1,4 +1,6 @@
 spring:
+  app:
+    version: '@project.version@'
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://derff.mysql.tools/derff_gradebook?useSSL=false&useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false

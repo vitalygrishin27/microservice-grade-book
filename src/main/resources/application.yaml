@@ -1,6 +1,4 @@
 spring:
-  app:
-    version: '@project.version@'
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://derff.mysql.tools/derff_gradebook?useSSL=false&useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false
@@ -17,3 +15,5 @@ spring:
     password: nF@5Tg34f-
     user: derff_gradebook
 maxUploadFileSizePlayerPhoto: 2000000
+app:
+  version: '@project.version@'

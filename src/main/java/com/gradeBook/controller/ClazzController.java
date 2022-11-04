@@ -1,7 +1,7 @@
 package com.gradeBook.controller;
 
 import com.gradeBook.entity.AccessLevel;
-import com.gradeBook.entity.Subject;
+import com.gradeBook.entity.Clazz;
 import com.gradeBook.exception.ForbiddenByAccessLevelException;
 import com.gradeBook.service.CRUDService;
 import lombok.RequiredArgsConstructor;
@@ -15,33 +15,33 @@ import java.util.List;
 @CrossOrigin
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("subjects")
-public class SubjectController {
+@RequestMapping("classes")
+public class ClazzController {
 
-    private final CRUDService<Subject> CRUDService;
+    private final CRUDService<Clazz> сlazzService;
 
     @GetMapping
-    public ResponseEntity<List<Subject>> getSubjects(@RequestAttribute AccessLevel.LEVEL level) {
+    public ResponseEntity<List<Clazz>> getClasses(@RequestAttribute AccessLevel.LEVEL level) {
         if (!AccessLevel.LEVEL.ADMIN.equals(level)) throw new ForbiddenByAccessLevelException();
-        return new ResponseEntity<>(CRUDService.findAll(), HttpStatus.OK);
+        return new ResponseEntity<>(сlazzService.findAll(), HttpStatus.OK);
     }
 
     @PostMapping
-    public ResponseEntity<Subject> create(@NonNull @ModelAttribute Subject subject, @RequestAttribute AccessLevel.LEVEL level) {
+    public ResponseEntity<Clazz> create(@NonNull @ModelAttribute Clazz clazz, @RequestAttribute AccessLevel.LEVEL level) {
         if (!AccessLevel.LEVEL.ADMIN.equals(level)) throw new ForbiddenByAccessLevelException();
-        return new ResponseEntity<>(CRUDService.create(subject), HttpStatus.CREATED);
+        return new ResponseEntity<>(сlazzService.create(clazz), HttpStatus.CREATED);
     }
 
     @PutMapping
-    public ResponseEntity<Subject> update(@NonNull @ModelAttribute Subject subject, @RequestAttribute AccessLevel.LEVEL level) {
+    public ResponseEntity<Clazz> update(@NonNull @ModelAttribute Clazz clazz, @RequestAttribute AccessLevel.LEVEL level) {
         if (!AccessLevel.LEVEL.ADMIN.equals(level)) throw new ForbiddenByAccessLevelException();
-        return new ResponseEntity<>(CRUDService.update(subject), HttpStatus.OK);
+        return new ResponseEntity<>(сlazzService.update(clazz), HttpStatus.OK);
     }
 
     @DeleteMapping(value = "/{id}")
     public ResponseEntity<Object> delete(@NonNull @PathVariable() Long id, @RequestAttribute AccessLevel.LEVEL level) {
         if (!AccessLevel.LEVEL.ADMIN.equals(level)) throw new ForbiddenByAccessLevelException();
-        CRUDService.delete(id);
+        сlazzService.delete(id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 
     }

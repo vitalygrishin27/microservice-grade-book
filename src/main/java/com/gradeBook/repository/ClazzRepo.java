@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ClazzRepo extends JpaRepository<Clazz, Long> {
+    Clazz findByName(String name);
 }

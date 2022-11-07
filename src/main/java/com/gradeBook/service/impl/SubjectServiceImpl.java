@@ -2,6 +2,7 @@ package com.gradeBook.service.impl;
 
 import com.gradeBook.entity.Subject;
 import com.gradeBook.exception.EntityAlreadyExistsException;
+import com.gradeBook.exception.EntityIsInvalidException;
 import com.gradeBook.exception.EntityNotFoundException;
 import com.gradeBook.repository.SubjectRepo;
 import com.gradeBook.service.CRUDService;
@@ -22,12 +23,14 @@ public class SubjectServiceImpl implements CRUDService<Subject> {
     }
 
     public Subject create(Subject subject) {
+        if (subject.getName().equals("")) throw new EntityIsInvalidException();
         if (subjectRepo.findByName(subject.getName()) != null)
             throw new EntityAlreadyExistsException(subject.getName());
         return subjectRepo.saveAndFlush(subject);
     }
 
     public Subject update(Subject subject) {
+        if (subject.getName().equals("")) throw new EntityIsInvalidException();
         Subject subjectFromDB = subjectRepo.findByName(subject.getName());
         if (subjectFromDB != null && !Objects.equals(subjectFromDB.getOID(), subject.getOID()))
             throw new EntityAlreadyExistsException(subject.getName());

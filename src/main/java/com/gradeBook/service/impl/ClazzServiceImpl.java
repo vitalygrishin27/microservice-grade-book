@@ -24,6 +24,7 @@ public class ClazzServiceImpl implements CRUDService<Clazz> {
 
     public Clazz create(Clazz clazz) {
         if (clazz.getName().equals("")) throw new EntityIsInvalidException();
+        replaceCyrillicSymbols(clazz);
         if (clazzRepo.findByName(clazz.getName()) != null)
             throw new EntityAlreadyExistsException(clazz.getName());
         return clazzRepo.saveAndFlush(clazz);
@@ -31,6 +32,7 @@ public class ClazzServiceImpl implements CRUDService<Clazz> {
 
     public Clazz update(Clazz clazz) {
         if (clazz.getName().equals("")) throw new EntityIsInvalidException();
+        replaceCyrillicSymbols(clazz);
         Clazz clazzFromDB = clazzRepo.findByName(clazz.getName());
         if (clazzFromDB != null && !Objects.equals(clazzFromDB.getOID(), clazz.getOID()))
             throw new EntityAlreadyExistsException(clazz.getName());
@@ -40,5 +42,16 @@ public class ClazzServiceImpl implements CRUDService<Clazz> {
     public void delete(Long id) {
         Clazz clazz = clazzRepo.findById(id).orElseThrow(() -> new EntityNotFoundException(id));
         clazzRepo.delete(clazz);
+    }
+
+    private void replaceCyrillicSymbols(Clazz clazz) {
+        clazz.setName(clazz.getName().replace("А", "A"));
+        clazz.setName(clazz.getName().replace("В", "B"));
+        clazz.setName(clazz.getName().replace("С", "C"));
+        clazz.setName(clazz.getName().replace("Е", "E"));
+        clazz.setName(clazz.getName().replace("а", "a"));
+        clazz.setName(clazz.getName().replace("в", "b"));
+        clazz.setName(clazz.getName().replace("с", "c"));
+        clazz.setName(clazz.getName().replace("е", "e"));
     }
 }

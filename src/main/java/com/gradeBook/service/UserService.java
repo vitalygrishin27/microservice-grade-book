@@ -1,7 +1,9 @@
 package com.gradeBook.service;
 
-import com.gradeBook.entity.Token;
+import com.gradeBook.converter.UserConverter;
+import com.gradeBook.entity.AccessLevel;
 import com.gradeBook.entity.User;
+import com.gradeBook.entity.bom.UserBom;
 import com.gradeBook.exception.InvalidUserPasswordException;
 import com.gradeBook.exception.UserNotFoundException;
 import com.gradeBook.repository.UserRepo;
@@ -14,11 +16,16 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class UserService {
+    private final UserConverter userConverter;
 
     private final UserRepo userRepo;
 
-    public List<User> findAll() {
-        return userRepo.findAll();
+    public List<UserBom> findAll() {
+        return userConverter.toUserBom(userRepo.findAll());
+    }
+
+    public List<UserBom> findAll(AccessLevel.LEVEL level) {
+        return userConverter.toUserBom(userRepo.findByAccessLevel_Level(level));
     }
 
     private User findByLogin(String login) {
@@ -38,4 +45,5 @@ public class UserService {
     public boolean isPasswordMatch(String password, String encryptedPassword) {
         return new String(Base64.getDecoder().decode(encryptedPassword)).equals(password);
     }
+
 }

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd"
+>
+    <changeSet id="006" author="Vitaliy H.">
+        <sql stripComments="true">
+            <comment>insert access levels</comment>
+            Insert into access_level
+                (OID, NAME, DESCRIPTION, LEVEL)
+            Values (3, 'TEACHER', 'Allow manage own lessons', 'TEACHER'),
+                   (4, 'PUPIL', 'Allow watch own info', 'PUPIL');
+        </sql>
+    </changeSet>
+</databaseChangeLog>

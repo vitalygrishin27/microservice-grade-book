@@ -17,4 +17,9 @@ public class GradeBook {
     public void started() {
         TimeZone.setDefault(TimeZone.getTimeZone("+02:00"));
     }*/
+
+    @PostConstruct
+    public void started() {
+        TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
+    }
 }

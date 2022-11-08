@@ -13,7 +13,11 @@ public class AccessLevelService {
 
     private final AccessLevelRepo accessLevelRepo;
 
-    public AccessLevel save(AccessLevel accessLevel){
+    public List<AccessLevel> findAll() {
+        return accessLevelRepo.findAll();
+    }
+
+    public AccessLevel save(AccessLevel accessLevel) {
         return accessLevelRepo.saveAndFlush(accessLevel);
     }
 

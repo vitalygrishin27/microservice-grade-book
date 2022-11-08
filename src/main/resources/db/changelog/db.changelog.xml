@@ -9,4 +9,5 @@
     <include file="db.003-add-admin-user.xml" relativeToChangelogFile="true"/>
     <include file="db.004-add-app-settings-table.xml" relativeToChangelogFile="true"/>
     <include file="db.005-add-subject-table.xml" relativeToChangelogFile="true"/>
+    <include file="db.006-add-access-levels.xml" relativeToChangelogFile="true"/>
 </databaseChangeLog>

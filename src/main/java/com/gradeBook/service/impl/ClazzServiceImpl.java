@@ -22,6 +22,10 @@ public class ClazzServiceImpl implements CRUDService<Clazz> {
         return clazzRepo.findAll();
     }
 
+    public Clazz findById(Long id) {
+        return clazzRepo.findById(id).get();
+    }
+
     public Clazz create(Clazz clazz) {
         if (clazz.getName().equals("")) throw new EntityIsInvalidException();
         replaceCyrillicSymbols(clazz);

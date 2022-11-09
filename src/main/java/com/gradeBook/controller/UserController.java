@@ -71,40 +71,17 @@ public class UserController {
         return new ResponseEntity<>(accessLevelService.findAll(), HttpStatus.OK);
     }
 
-    @PostMapping("/teachers")
-    public ResponseEntity<User> createTeacher(@RequestBody Teacher teacher, @NotNull @RequestAttribute AccessLevel.LEVEL level) {
+
+    @PostMapping
+    public ResponseEntity<UserBom> createUser(@RequestBody UserBom newUser, @NotNull @RequestAttribute AccessLevel.LEVEL level) {
         if (!AccessLevel.LEVEL.ADMIN.equals(level)) throw new ForbiddenByAccessLevelException();
-        return new ResponseEntity<>(userRepo.saveAndFlush(teacher), HttpStatus.OK);
+        return new ResponseEntity<>(userService.create(newUser), HttpStatus.OK);
     }
 
-    @PostMapping("/admins")
-    public ResponseEntity<User> createWatcher(@RequestBody Watcher watcher, @NotNull @RequestAttribute AccessLevel.LEVEL level) {
+    @PutMapping
+    public ResponseEntity<UserBom> updateUser(@RequestBody UserBom updatedUser, @NotNull @RequestAttribute AccessLevel.LEVEL level) {
         if (!AccessLevel.LEVEL.ADMIN.equals(level)) throw new ForbiddenByAccessLevelException();
-        return new ResponseEntity<>(userRepo.saveAndFlush(watcher), HttpStatus.OK);
-    }
-
-    @PostMapping("/pupils")
-    public ResponseEntity<User> createPupil(@RequestBody Pupil pupil, @NotNull @RequestAttribute AccessLevel.LEVEL level) {
-        if (!AccessLevel.LEVEL.ADMIN.equals(level)) throw new ForbiddenByAccessLevelException();
-        return new ResponseEntity<>(userRepo.saveAndFlush(pupil), HttpStatus.OK);
-    }
-
-    @PutMapping("/teachers")
-    public ResponseEntity<User> updateTeacher(@RequestBody Teacher teacher, @NotNull @RequestAttribute AccessLevel.LEVEL level) {
-        if (!AccessLevel.LEVEL.ADMIN.equals(level)) throw new ForbiddenByAccessLevelException();
-        return new ResponseEntity<>(userRepo.saveAndFlush(teacher), HttpStatus.OK);
-    }
-
-    @PutMapping("/admins")
-    public ResponseEntity<User> updateWatcher(@RequestBody Watcher watcher, @NotNull @RequestAttribute AccessLevel.LEVEL level) {
-        if (!AccessLevel.LEVEL.ADMIN.equals(level)) throw new ForbiddenByAccessLevelException();
-        return new ResponseEntity<>(userRepo.saveAndFlush(watcher), HttpStatus.OK);
-    }
-
-    @PutMapping("/pupils")
-    public ResponseEntity<User> updatePupil(@RequestBody Pupil pupil, @NotNull @RequestAttribute AccessLevel.LEVEL level) {
-        if (!AccessLevel.LEVEL.ADMIN.equals(level)) throw new ForbiddenByAccessLevelException();
-        return new ResponseEntity<>(userRepo.saveAndFlush(pupil), HttpStatus.OK);
+        return new ResponseEntity<>(userService.update(updatedUser), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")

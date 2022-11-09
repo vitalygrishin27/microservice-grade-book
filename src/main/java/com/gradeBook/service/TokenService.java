@@ -1,6 +1,5 @@
 package com.gradeBook.service;
 
-import com.gradeBook.entity.AppSettings;
 import com.gradeBook.entity.Token;
 import com.gradeBook.entity.User;
 import com.gradeBook.repository.TokenRepo;

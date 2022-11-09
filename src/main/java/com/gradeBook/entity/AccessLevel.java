@@ -21,9 +21,6 @@ public class AccessLevel {
     private LEVEL level;
 
     public enum LEVEL {
-        LOGIN, BASIC, ADMIN, TEACHER, PUPIL
+        ADMIN, TEACHER, PUPIL, BASIC
     }
-   /* @OneToMany(mappedBy = "accessLevel")
-    private Set<Token> tokens;*/
-
 }

@@ -10,8 +10,9 @@
             Insert into access_level
                 (OID, NAME, DESCRIPTION, LEVEL)
             Values (0, 'ADMIN', 'Allow only register page', 'ADMIN'),
-                   (1, 'LOGIN', 'Allow only', 'LOGIN'),
-                   (2, 'BASIC', 'Allow all', 'BASIC');
+                   (1, 'TEACHER', 'Allow manage own lessons', 'TEACHER'),
+                   (2, 'PUPIL', 'Allow watch own info', 'PUPIL'),
+                   (3, 'BASIC', 'Allow to Login', 'BASIC');
         </sql>
     </changeSet>
 </databaseChangeLog>

@@ -22,8 +22,9 @@ public class Clazz {
     private Teacher formMaster;
     @ManyToMany(mappedBy = "classes")
     Set<Teacher> teachers;
-    @OneToMany(mappedBy = "clazz")
-    private Set<Pupil> pupils;
+   /* @OneToMany(mappedBy = "clazz")
+    @JsonIgnore
+    private Set<Pupil> pupils;*/
     @OneToMany(mappedBy = "clazz")
     private Set<Lesson> lessons;
 

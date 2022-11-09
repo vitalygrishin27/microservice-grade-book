@@ -16,6 +16,9 @@ public class AccessLevelService {
     public List<AccessLevel> findAll() {
         return accessLevelRepo.findAll();
     }
+    public AccessLevel findByLevel(AccessLevel.LEVEL level) {
+        return accessLevelRepo.findByLevel(level);
+    }
 
     public AccessLevel save(AccessLevel accessLevel) {
         return accessLevelRepo.saveAndFlush(accessLevel);

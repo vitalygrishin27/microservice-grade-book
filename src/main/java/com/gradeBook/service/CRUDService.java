@@ -4,7 +4,7 @@ import java.util.List;
 
 
 public interface CRUDService<T> {
-    List<T> findAll();
+    List<T> findAll(Boolean needToSort);
 
     T create(T t);
 

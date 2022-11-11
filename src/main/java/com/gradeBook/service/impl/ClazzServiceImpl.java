@@ -9,8 +9,10 @@ import com.gradeBook.service.CRUDService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -18,8 +20,10 @@ public class ClazzServiceImpl implements CRUDService<Clazz> {
 
     private final ClazzRepo clazzRepo;
 
-    public List<Clazz> findAll() {
-        return clazzRepo.findAll();
+    public List<Clazz> findAll(Boolean needToSort) {
+        List<Clazz> result = clazzRepo.findAll();
+        if (!needToSort) return result;
+        return result.stream().sorted(Comparator.comparing(Clazz::getName)).collect(Collectors.toList());
     }
 
     public Clazz findById(Long id) {

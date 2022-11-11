@@ -9,8 +9,10 @@ import com.gradeBook.service.CRUDService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -18,8 +20,10 @@ public class SubjectServiceImpl implements CRUDService<Subject> {
 
     private final SubjectRepo subjectRepo;
 
-    public List<Subject> findAll() {
-        return subjectRepo.findAll();
+    public List<Subject> findAll(Boolean needToSort) {
+        List<Subject> result = subjectRepo.findAll();
+        if (!needToSort) return result;
+        return result.stream().sorted(Comparator.comparing(Subject::getName)).collect(Collectors.toList());
     }
 
     public Subject create(Subject subject) {

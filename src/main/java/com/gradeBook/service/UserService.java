@@ -12,8 +12,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Base64;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -22,12 +24,22 @@ public class UserService {
 
     private final UserRepo userRepo;
 
-    public List<UserBom> findAll() {
-        return userConverter.toUserBom(userRepo.findAll());
+    public List<UserBom> findAll(Boolean needToSort) {
+        List<UserBom> result = userConverter.toUserBom(userRepo.findAll());
+        if (!needToSort) return result;
+        return result.stream()
+                .sorted(Comparator.comparing(UserBom::getLastName)
+                        .thenComparing(UserBom::getFirstName)
+                        .thenComparing(UserBom::getSecondName)).collect(Collectors.toList());
     }
 
-    public List<UserBom> findAll(AccessLevel.LEVEL level) {
-        return userConverter.toUserBom(userRepo.findByAccessLevel_Level(level));
+    public List<UserBom> findAll(AccessLevel.LEVEL level, Boolean needToSort) {
+        List<UserBom> result = userConverter.toUserBom(userRepo.findByAccessLevel_Level(level));
+        if (!needToSort) return result;
+        return result.stream()
+                .sorted(Comparator.comparing(UserBom::getLastName)
+                        .thenComparing(UserBom::getFirstName)
+                        .thenComparing(UserBom::getSecondName)).collect(Collectors.toList());
     }
 
     public UserBom create(UserBom userBom) {

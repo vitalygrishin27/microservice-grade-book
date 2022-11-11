@@ -21,9 +21,9 @@ public class SubjectController {
     private final CRUDService<Subject> CRUDService;
 
     @GetMapping
-    public ResponseEntity<List<Subject>> getSubjects(@RequestAttribute AccessLevel.LEVEL level) {
+    public ResponseEntity<List<Subject>> getSubjects(@RequestAttribute AccessLevel.LEVEL level, @RequestParam(defaultValue = "true") Boolean needToSort) {
         if (!AccessLevel.LEVEL.ADMIN.equals(level)) throw new ForbiddenByAccessLevelException();
-        return new ResponseEntity<>(CRUDService.findAll(), HttpStatus.OK);
+        return new ResponseEntity<>(CRUDService.findAll(needToSort), HttpStatus.OK);
     }
 
     @PostMapping

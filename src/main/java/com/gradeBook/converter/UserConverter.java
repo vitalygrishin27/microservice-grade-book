@@ -1,6 +1,7 @@
 package com.gradeBook.converter;
 
 import com.gradeBook.entity.*;
+import com.gradeBook.entity.bom.ClazzBom;
 import com.gradeBook.entity.bom.UserBom;
 import com.gradeBook.service.AccessLevelService;
 import com.gradeBook.service.impl.ClazzServiceImpl;
@@ -15,6 +16,7 @@ import java.util.List;
 public class UserConverter {
     private final AccessLevelService accessLevelService;
     private final ClazzServiceImpl clazzService;
+    private final ClazzConverter clazzConverter;
 
     public UserBom toUserBom(User source) {
         if (source == null) return null;
@@ -26,10 +28,13 @@ public class UserConverter {
         result.setLogin(source.getLogin());
         result.setPassword(source.getPassword());
         result.setAccessLevel(source.getAccessLevel().getName());
-        result.setClazzId(null);
-        if (source instanceof Pupil) result.setClazzId(((Pupil) source).getClazz().getOID());
+        result.setClazz(null);
+        if (source instanceof Pupil)
+            result.setClazz(clazzConverter.toClazzBom(((Pupil) source).getClazz()));
+
         if (source instanceof Teacher)
-            result.setClazzId(((Teacher) source).getClassFormMaster() != null ? ((Teacher) source).getClassFormMaster().getOID() : null);
+            if ((((Teacher) source).getClassFormMaster() != null))
+                result.setClazz(clazzConverter.toClazzBom(((Teacher) source).getClassFormMaster()));
 
         return result;
     }
@@ -44,9 +49,8 @@ public class UserConverter {
     public User toUser(UserBom source) {
         if (source == null) return null;
         User result = switch (AccessLevel.LEVEL.valueOf(source.getAccessLevel())) {
-            case ADMIN -> new Watcher();
-            case TEACHER -> new Teacher(null, null, source.getClazzId() == null ? null : clazzService.findById(source.getClazzId()));
-            case PUPIL -> new Pupil(clazzService.findById(source.getClazzId()), null, null);
+            case TEACHER -> new Teacher(null, null, source.getClazz() == null ? null : clazzService.findById(source.getClazz().getOID()));
+            case PUPIL -> new Pupil(clazzService.findById(source.getClazz().getOID()), null, null);
             default -> new Watcher();
         };
 

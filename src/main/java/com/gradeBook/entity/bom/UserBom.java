@@ -17,5 +17,5 @@ public class UserBom {
     private String password;
     private String accessLevel;
     private Token token;
-    private Long clazzId;
+    private ClazzBom clazz;
 }

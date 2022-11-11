@@ -55,7 +55,7 @@ public class UserService {
                 userBomFormDB.getPassword() :
                 encryptPassword(updatedUserBom.getLogin()));
         userBomFormDB.setAccessLevel(updatedUserBom.getAccessLevel());
-        userBomFormDB.setClazzId(updatedUserBom.getClazzId());
+        userBomFormDB.setClazz(updatedUserBom.getClazz() == null ? null : updatedUserBom.getClazz());
         return userConverter.toUserBom(userRepo.saveAndFlush(userConverter.toUser(userBomFormDB)));
     }
 

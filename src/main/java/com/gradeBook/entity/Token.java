@@ -29,4 +29,6 @@ public class Token {
     }
     @Transient
     private String firstName;
+    @Transient
+    private String accessLevel;
 }

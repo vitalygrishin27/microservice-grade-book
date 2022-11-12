@@ -38,6 +38,7 @@ public class UserController {
     public ResponseEntity<Token> checkToken(@Nullable @RequestAttribute Token token, @RequestAttribute AccessLevel.LEVEL level) {
         if (token == null || !token.isValid()) throw new ForbiddenByAccessLevelException();
         token.setFirstName(token.getUser().getFirstName());
+        token.setAccessLevel(token.getUser().getAccessLevel().getLevel().toString());
         return new ResponseEntity<>(token, HttpStatus.OK);
     }
 

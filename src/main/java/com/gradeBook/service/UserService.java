@@ -1,13 +1,13 @@
 package com.gradeBook.service;
 
 import com.gradeBook.converter.UserConverter;
-import com.gradeBook.entity.AccessLevel;
-import com.gradeBook.entity.User;
+import com.gradeBook.entity.*;
 import com.gradeBook.entity.bom.UserBom;
 import com.gradeBook.exception.EntityAlreadyExistsException;
 import com.gradeBook.exception.InvalidUserPasswordException;
 import com.gradeBook.exception.UserNotFoundException;
 import com.gradeBook.repository.UserRepo;
+import com.gradeBook.service.impl.ClazzServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +21,8 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class UserService {
     private final UserConverter userConverter;
+    private final AccessLevelService accessLevelService;
+    private final ClazzServiceImpl clazzService;
 
     private final UserRepo userRepo;
 
@@ -45,9 +47,7 @@ public class UserService {
     public UserBom create(UserBom userBom) {
         if (userRepo.findByLogin(userBom.getLogin()).isPresent())
             throw new EntityAlreadyExistsException(userBom.getLogin());
-        User newUser = userConverter.toUser(userBom);
-        newUser.setPassword(encryptPassword(newUser.getPassword()));
-        return userConverter.toUserBom(userRepo.saveAndFlush(newUser));
+        return userConverter.toUserBom(userRepo.saveAndFlush(userConverter.toNewUser(userBom)));
     }
 
     public UserBom update(UserBom updatedUserBom) {
@@ -58,17 +58,23 @@ public class UserService {
         if (userFromDBOptional.isEmpty())
             throw new UserNotFoundException(updatedUserBom.getLogin() + "(id=" + updatedUserBom.getOID() + ")");
         User userFromDB = userFromDBOptional.get();
-        UserBom userBomFormDB = userConverter.toUserBom(userFromDB);
-        userBomFormDB.setLastName(updatedUserBom.getLastName());
-        userBomFormDB.setFirstName(updatedUserBom.getFirstName());
-        userBomFormDB.setSecondName(updatedUserBom.getSecondName());
-        userBomFormDB.setLogin(updatedUserBom.getLogin());
-        userBomFormDB.setPassword(updatedUserBom.getPassword().equals(userBomFormDB.getPassword()) ?
-                userBomFormDB.getPassword() :
+        userFromDB.setLastName(updatedUserBom.getLastName());
+        userFromDB.setFirstName(updatedUserBom.getFirstName());
+        userFromDB.setSecondName(updatedUserBom.getSecondName());
+        userFromDB.setLogin(updatedUserBom.getLogin());
+        userFromDB.setPassword(updatedUserBom.getPassword().equals(userFromDB.getPassword()) ?
+                userFromDB.getPassword() :
                 encryptPassword(updatedUserBom.getLogin()));
-        userBomFormDB.setAccessLevel(updatedUserBom.getAccessLevel());
-        userBomFormDB.setClazz(updatedUserBom.getClazz() == null ? null : updatedUserBom.getClazz());
-        return userConverter.toUserBom(userRepo.saveAndFlush(userConverter.toUser(userBomFormDB)));
+        userFromDB.setAccessLevel(accessLevelService.findByLevel(AccessLevel.LEVEL.valueOf(updatedUserBom.getAccessLevel())));
+        switch (userFromDB.getAccessLevel().getLevel()) {
+            case TEACHER -> {
+                if (updatedUserBom.getClazz() != null) {
+                    ((Teacher) userFromDB).setClassFormMaster(clazzService.findById(updatedUserBom.getClazz().getOID()));
+                }
+            }
+            case PUPIL -> ((Pupil) userFromDB).setClazz(clazzService.findById(updatedUserBom.getClazz().getOID()));
+        }
+        return userConverter.toUserBom(userRepo.saveAndFlush(userFromDB));
     }
 
     private User findByLogin(String login) {

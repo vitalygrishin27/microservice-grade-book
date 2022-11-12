@@ -1,7 +1,6 @@
 package com.gradeBook.converter;
 
 import com.gradeBook.entity.*;
-import com.gradeBook.entity.bom.ClazzBom;
 import com.gradeBook.entity.bom.UserBom;
 import com.gradeBook.service.AccessLevelService;
 import com.gradeBook.service.impl.ClazzServiceImpl;
@@ -10,6 +9,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.gradeBook.service.UserService.encryptPassword;
 
 @Service
 @RequiredArgsConstructor
@@ -46,7 +47,7 @@ public class UserConverter {
         return result;
     }
 
-    public User toUser(UserBom source) {
+    public User toNewUser(UserBom source) {
         if (source == null) return null;
         User result = switch (AccessLevel.LEVEL.valueOf(source.getAccessLevel())) {
             case TEACHER -> new Teacher(null, null, source.getClazz() == null ? null : clazzService.findById(source.getClazz().getOID()));
@@ -59,7 +60,7 @@ public class UserConverter {
         result.setFirstName(source.getFirstName());
         result.setSecondName(source.getSecondName());
         result.setLogin(source.getLogin());
-        result.setPassword(source.getPassword());
+        result.setPassword(encryptPassword(source.getPassword()));
         result.setAccessLevel(accessLevelService.findByLevel(AccessLevel.LEVEL.valueOf(source.getAccessLevel())));
         return result;
     }

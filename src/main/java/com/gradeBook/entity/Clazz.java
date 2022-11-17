@@ -1,5 +1,6 @@
 package com.gradeBook.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -17,15 +18,23 @@ public class Clazz {
     @GeneratedValue
     private Long OID;
     private String name;
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name="FK_TEACHER_FORM_MASTER_OID", referencedColumnName = "OID")
     private Teacher formMaster;
     @ManyToMany(mappedBy = "classes")
     Set<Teacher> teachers;
-   /* @OneToMany(mappedBy = "clazz")
+  /*  @OneToMany(mappedBy = "clazz")
     @JsonIgnore
     private Set<Pupil> pupils;*/
     @OneToMany(mappedBy = "clazz")
+    @JsonIgnore
     private Set<Lesson> lessons;
 
+    @Override
+    public String toString() {
+        return "Clazz{" +
+                "OID=" + OID +
+                ", name='" + name + '\'' +
+                '}';
+    }
 }

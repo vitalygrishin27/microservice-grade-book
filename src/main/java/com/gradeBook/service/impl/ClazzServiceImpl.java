@@ -1,10 +1,15 @@
 package com.gradeBook.service.impl;
 
+import com.gradeBook.converter.ClazzConverter;
 import com.gradeBook.entity.Clazz;
+import com.gradeBook.entity.Pupil;
+import com.gradeBook.entity.bom.ClazzBom;
+import com.gradeBook.exception.ClassHasPupilsException;
 import com.gradeBook.exception.EntityAlreadyExistsException;
 import com.gradeBook.exception.EntityIsInvalidException;
 import com.gradeBook.exception.EntityNotFoundException;
 import com.gradeBook.repository.ClazzRepo;
+import com.gradeBook.repository.PupilRepo;
 import com.gradeBook.service.CRUDService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -12,54 +17,60 @@ import org.springframework.stereotype.Service;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class ClazzServiceImpl implements CRUDService<Clazz> {
+public class ClazzServiceImpl implements CRUDService<ClazzBom> {
 
     private final ClazzRepo clazzRepo;
+    private final PupilRepo pupilRepo;
+    private final ClazzConverter clazzConverter;
 
-    public List<Clazz> findAll(Boolean needToSort) {
+    public List<ClazzBom> findAll(Boolean needToSort) {
         List<Clazz> result = clazzRepo.findAll();
-        if (!needToSort) return result;
-        return result.stream().sorted(Comparator.comparing(Clazz::getName)).collect(Collectors.toList());
+        if (!needToSort) return clazzConverter.toBom(result);
+        return clazzConverter.toBom(result.stream().sorted(Comparator.comparing(Clazz::getName)).collect(Collectors.toList()));
     }
 
-    public Clazz findById(Long id) {
-        return clazzRepo.findById(id).get();
+    public ClazzBom findById(Long id) {
+        Optional<Clazz> clazzOptional = clazzRepo.findById(id);
+        if (clazzOptional.isEmpty()) return null;
+        return clazzConverter.toBom(clazzOptional.get());
     }
 
-    public Clazz create(Clazz clazz) {
-        if (clazz.getName().equals("")) throw new EntityIsInvalidException();
-        replaceCyrillicSymbols(clazz);
-        if (clazzRepo.findByName(clazz.getName()) != null)
-            throw new EntityAlreadyExistsException(clazz.getName());
-        return clazzRepo.saveAndFlush(clazz);
+    public ClazzBom create(ClazzBom clazzBom) {
+        if (clazzBom.getName().equals("")) throw new EntityIsInvalidException();
+        replaceCyrillicSymbols(clazzBom);
+        if (clazzRepo.findByName(clazzBom.getName()) != null)
+            throw new EntityAlreadyExistsException(clazzBom.getName());
+        return clazzConverter.toBom(clazzRepo.saveAndFlush(clazzConverter.fromBom(clazzBom)));
     }
 
-    public Clazz update(Clazz clazz) {
-        if (clazz.getName().equals("")) throw new EntityIsInvalidException();
-        replaceCyrillicSymbols(clazz);
-        Clazz clazzFromDB = clazzRepo.findByName(clazz.getName());
-        if (clazzFromDB != null && !Objects.equals(clazzFromDB.getOID(), clazz.getOID()))
-            throw new EntityAlreadyExistsException(clazz.getName());
-        return clazzRepo.saveAndFlush(clazz);
+    public ClazzBom update(ClazzBom clazzBom) {
+        if (clazzBom.getName().equals("")) throw new EntityIsInvalidException();
+        replaceCyrillicSymbols(clazzBom);
+        Clazz clazzFromDB = clazzRepo.findByName(clazzBom.getName());
+        if (clazzFromDB != null && !Objects.equals(clazzFromDB.getOID(), clazzBom.getOID()))
+            throw new EntityAlreadyExistsException(clazzBom.getName());
+        return clazzConverter.toBom(clazzRepo.saveAndFlush(clazzConverter.fromBom(clazzBom)));
     }
 
     public void delete(Long id) {
         Clazz clazz = clazzRepo.findById(id).orElseThrow(() -> new EntityNotFoundException(id));
+        if (!pupilRepo.findByClazz(clazz).isEmpty()) throw new ClassHasPupilsException(clazz.getName());
         clazzRepo.delete(clazz);
     }
 
-    private void replaceCyrillicSymbols(Clazz clazz) {
-        clazz.setName(clazz.getName().replace("А", "A"));
-        clazz.setName(clazz.getName().replace("В", "B"));
-        clazz.setName(clazz.getName().replace("С", "C"));
-        clazz.setName(clazz.getName().replace("Е", "E"));
-        clazz.setName(clazz.getName().replace("а", "a"));
-        clazz.setName(clazz.getName().replace("в", "b"));
-        clazz.setName(clazz.getName().replace("с", "c"));
-        clazz.setName(clazz.getName().replace("е", "e"));
+    private void replaceCyrillicSymbols(ClazzBom clazzBom) {
+        clazzBom.setName(clazzBom.getName().replace("А", "A"));
+        clazzBom.setName(clazzBom.getName().replace("В", "B"));
+        clazzBom.setName(clazzBom.getName().replace("С", "C"));
+        clazzBom.setName(clazzBom.getName().replace("Е", "E"));
+        clazzBom.setName(clazzBom.getName().replace("а", "a"));
+        clazzBom.setName(clazzBom.getName().replace("в", "b"));
+        clazzBom.setName(clazzBom.getName().replace("с", "c"));
+        clazzBom.setName(clazzBom.getName().replace("е", "e"));
     }
 }

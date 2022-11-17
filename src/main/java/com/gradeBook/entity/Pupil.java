@@ -22,4 +22,11 @@ public class Pupil extends User {
 
     @OneToMany(mappedBy = "pupil")
     private Set<Mark> marks;
+
+    @Override
+    public String toString() {
+        return "Pupil{" +
+                "clazz=" + (clazz != null ? clazz.getName() : null) +
+                '}';
+    }
 }

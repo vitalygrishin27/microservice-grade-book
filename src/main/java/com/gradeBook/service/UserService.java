@@ -1,13 +1,16 @@
 package com.gradeBook.service;
 
 import com.gradeBook.converter.UserConverter;
-import com.gradeBook.entity.*;
+import com.gradeBook.entity.AccessLevel;
+import com.gradeBook.entity.Clazz;
+import com.gradeBook.entity.Teacher;
+import com.gradeBook.entity.User;
 import com.gradeBook.entity.bom.UserBom;
 import com.gradeBook.exception.EntityAlreadyExistsException;
 import com.gradeBook.exception.InvalidUserPasswordException;
 import com.gradeBook.exception.UserNotFoundException;
+import com.gradeBook.repository.ClazzRepo;
 import com.gradeBook.repository.UserRepo;
-import com.gradeBook.service.impl.ClazzServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -21,13 +24,12 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class UserService {
     private final UserConverter userConverter;
-    private final AccessLevelService accessLevelService;
-    private final ClazzServiceImpl clazzService;
 
     private final UserRepo userRepo;
+    private final ClazzRepo clazzRepo;
 
     public List<UserBom> findAll(Boolean needToSort) {
-        List<UserBom> result = userConverter.toUserBom(userRepo.findAll());
+        List<UserBom> result = userConverter.toBom(userRepo.findAll());
         if (!needToSort) return result;
         return result.stream()
                 .sorted(Comparator.comparing(UserBom::getLastName)
@@ -36,7 +38,7 @@ public class UserService {
     }
 
     public List<UserBom> findAll(AccessLevel.LEVEL level, Boolean needToSort) {
-        List<UserBom> result = userConverter.toUserBom(userRepo.findByAccessLevel_Level(level));
+        List<UserBom> result = userConverter.toBom(userRepo.findByAccessLevel_Level(level));
         if (!needToSort) return result;
         return result.stream()
                 .sorted(Comparator.comparing(UserBom::getLastName)
@@ -47,7 +49,7 @@ public class UserService {
     public UserBom create(UserBom userBom) {
         if (userRepo.findByLogin(userBom.getLogin()).isPresent())
             throw new EntityAlreadyExistsException(userBom.getLogin());
-        return userConverter.toUserBom(userRepo.saveAndFlush(userConverter.toNewUser(userBom)));
+        return userConverter.toBom(userRepo.saveAndFlush(userConverter.fromBom(userBom)));
     }
 
     public UserBom update(UserBom updatedUserBom) {
@@ -57,24 +59,19 @@ public class UserService {
         Optional<User> userFromDBOptional = userRepo.findById(updatedUserBom.getOID());
         if (userFromDBOptional.isEmpty())
             throw new UserNotFoundException(updatedUserBom.getLogin() + "(id=" + updatedUserBom.getOID() + ")");
-        User userFromDB = userFromDBOptional.get();
-        userFromDB.setLastName(updatedUserBom.getLastName());
-        userFromDB.setFirstName(updatedUserBom.getFirstName());
-        userFromDB.setSecondName(updatedUserBom.getSecondName());
-        userFromDB.setLogin(updatedUserBom.getLogin());
-        userFromDB.setPassword(updatedUserBom.getPassword().equals(userFromDB.getPassword()) ?
-                userFromDB.getPassword() :
-                encryptPassword(updatedUserBom.getLogin()));
-        userFromDB.setAccessLevel(accessLevelService.findByLevel(AccessLevel.LEVEL.valueOf(updatedUserBom.getAccessLevel())));
-        switch (userFromDB.getAccessLevel().getLevel()) {
-            case TEACHER -> {
-                if (updatedUserBom.getClazz() != null) {
-                    ((Teacher) userFromDB).setClassFormMaster(clazzService.findById(updatedUserBom.getClazz().getOID()));
-                }
-            }
-            case PUPIL -> ((Pupil) userFromDB).setClazz(clazzService.findById(updatedUserBom.getClazz().getOID()));
+        return userConverter.toBom(userRepo.saveAndFlush(userConverter.fromBom(updatedUserBom)));
+    }
+
+    public void delete(Long userId) {
+        Optional<User> userOptional = userRepo.findById(userId);
+        if (userOptional.isEmpty()) return;
+        if (userOptional.get() instanceof Teacher && ((Teacher) userOptional.get()).getClassFormMaster() != null) {
+            Clazz clazz = ((Teacher) userOptional.get()).getClassFormMaster();
+            ((Teacher) userOptional.get()).setClassFormMaster(null);
+            clazz.setFormMaster(null);
+            clazzRepo.saveAndFlush(clazz);
         }
-        return userConverter.toUserBom(userRepo.saveAndFlush(userFromDB));
+        userRepo.delete(userOptional.get());
     }
 
     private User findByLogin(String login) {

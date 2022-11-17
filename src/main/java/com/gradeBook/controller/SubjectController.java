@@ -1,7 +1,7 @@
 package com.gradeBook.controller;
 
 import com.gradeBook.entity.AccessLevel;
-import com.gradeBook.entity.Subject;
+import com.gradeBook.entity.bom.SubjectBom;
 import com.gradeBook.exception.ForbiddenByAccessLevelException;
 import com.gradeBook.service.CRUDService;
 import lombok.RequiredArgsConstructor;
@@ -18,24 +18,24 @@ import java.util.List;
 @RequestMapping("subjects")
 public class SubjectController {
 
-    private final CRUDService<Subject> CRUDService;
+    private final CRUDService<SubjectBom> CRUDService;
 
     @GetMapping
-    public ResponseEntity<List<Subject>> getSubjects(@RequestAttribute AccessLevel.LEVEL level, @RequestParam(defaultValue = "true") Boolean needToSort) {
+    public ResponseEntity<List<SubjectBom>> getSubjects(@RequestAttribute AccessLevel.LEVEL level, @RequestParam(defaultValue = "true") Boolean needToSort) {
         if (!AccessLevel.LEVEL.ADMIN.equals(level)) throw new ForbiddenByAccessLevelException();
         return new ResponseEntity<>(CRUDService.findAll(needToSort), HttpStatus.OK);
     }
 
     @PostMapping
-    public ResponseEntity<Subject> create(@NonNull @ModelAttribute Subject subject, @RequestAttribute AccessLevel.LEVEL level) {
+    public ResponseEntity<SubjectBom> create(@NonNull @ModelAttribute SubjectBom subjectBom, @RequestAttribute AccessLevel.LEVEL level) {
         if (!AccessLevel.LEVEL.ADMIN.equals(level)) throw new ForbiddenByAccessLevelException();
-        return new ResponseEntity<>(CRUDService.create(subject), HttpStatus.CREATED);
+        return new ResponseEntity<>(CRUDService.create(subjectBom), HttpStatus.CREATED);
     }
 
     @PutMapping
-    public ResponseEntity<Subject> update(@NonNull @ModelAttribute Subject subject, @RequestAttribute AccessLevel.LEVEL level) {
+    public ResponseEntity<SubjectBom> update(@NonNull @ModelAttribute SubjectBom subjectBom, @RequestAttribute AccessLevel.LEVEL level) {
         if (!AccessLevel.LEVEL.ADMIN.equals(level)) throw new ForbiddenByAccessLevelException();
-        return new ResponseEntity<>(CRUDService.update(subject), HttpStatus.OK);
+        return new ResponseEntity<>(CRUDService.update(subjectBom), HttpStatus.OK);
     }
 
     @DeleteMapping(value = "/{id}")

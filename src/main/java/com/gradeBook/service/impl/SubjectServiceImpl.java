@@ -1,6 +1,8 @@
 package com.gradeBook.service.impl;
 
+import com.gradeBook.converter.SubjectConverter;
 import com.gradeBook.entity.Subject;
+import com.gradeBook.entity.bom.SubjectBom;
 import com.gradeBook.exception.EntityAlreadyExistsException;
 import com.gradeBook.exception.EntityIsInvalidException;
 import com.gradeBook.exception.EntityNotFoundException;
@@ -16,29 +18,30 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class SubjectServiceImpl implements CRUDService<Subject> {
+public class SubjectServiceImpl implements CRUDService<SubjectBom> {
 
     private final SubjectRepo subjectRepo;
+    private final SubjectConverter subjectConverter;
 
-    public List<Subject> findAll(Boolean needToSort) {
+    public List<SubjectBom> findAll(Boolean needToSort) {
         List<Subject> result = subjectRepo.findAll();
-        if (!needToSort) return result;
-        return result.stream().sorted(Comparator.comparing(Subject::getName)).collect(Collectors.toList());
+        if (!needToSort) return subjectConverter.toBom(result);
+        return subjectConverter.toBom(result.stream().sorted(Comparator.comparing(Subject::getName)).collect(Collectors.toList()));
     }
 
-    public Subject create(Subject subject) {
-        if (subject.getName().equals("")) throw new EntityIsInvalidException();
-        if (subjectRepo.findByName(subject.getName()) != null)
-            throw new EntityAlreadyExistsException(subject.getName());
-        return subjectRepo.saveAndFlush(subject);
+    public SubjectBom create(SubjectBom subjectBom) {
+        if (subjectBom.getName().equals("")) throw new EntityIsInvalidException();
+        if (subjectRepo.findByName(subjectBom.getName()) != null)
+            throw new EntityAlreadyExistsException(subjectBom.getName());
+        return subjectConverter.toBom(subjectRepo.saveAndFlush(subjectConverter.fromBom(subjectBom)));
     }
 
-    public Subject update(Subject subject) {
-        if (subject.getName().equals("")) throw new EntityIsInvalidException();
-        Subject subjectFromDB = subjectRepo.findByName(subject.getName());
-        if (subjectFromDB != null && !Objects.equals(subjectFromDB.getOID(), subject.getOID()))
-            throw new EntityAlreadyExistsException(subject.getName());
-        return subjectRepo.saveAndFlush(subject);
+    public SubjectBom update(SubjectBom subjectBom) {
+        if (subjectBom.getName().equals("")) throw new EntityIsInvalidException();
+        Subject subjectFromDB = subjectRepo.findByName(subjectBom.getName());
+        if (subjectFromDB != null && !Objects.equals(subjectFromDB.getOID(), subjectBom.getOID()))
+            throw new EntityAlreadyExistsException(subjectBom.getName());
+        return subjectConverter.toBom(subjectRepo.saveAndFlush(subjectConverter.fromBom(subjectBom)));
     }
 
     public void delete(Long id) {

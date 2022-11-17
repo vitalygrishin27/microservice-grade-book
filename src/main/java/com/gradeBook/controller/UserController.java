@@ -16,6 +16,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @CrossOrigin
 @Controller
@@ -88,7 +89,7 @@ public class UserController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> updateTeacher(@PathVariable Long id, @NotNull @RequestAttribute AccessLevel.LEVEL level) {
         if (!AccessLevel.LEVEL.ADMIN.equals(level)) throw new ForbiddenByAccessLevelException();
-        userRepo.deleteById(id);
+        userService.delete(id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 

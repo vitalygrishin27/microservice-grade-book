@@ -23,4 +23,11 @@ public class Teacher extends User {
     private Set<Lesson> lessons;
     @OneToOne(mappedBy = "formMaster")
     private Clazz classFormMaster;
+
+    @Override
+    public String toString() {
+        return "Teacher{" +
+                "classFormMaster=" + (classFormMaster != null ? classFormMaster.getName() : null) +
+                '}';
+    }
 }

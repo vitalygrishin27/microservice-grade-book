@@ -23,10 +23,11 @@ public class SubjectServiceImpl implements CRUDService<SubjectBom> {
     private final SubjectRepo subjectRepo;
     private final SubjectConverter subjectConverter;
 
-    public List<SubjectBom> findAll(Boolean needToSort) {
-        List<Subject> result = subjectRepo.findAll();
-        if (!needToSort) return subjectConverter.toBom(result);
-        return subjectConverter.toBom(result.stream().sorted(Comparator.comparing(Subject::getName)).collect(Collectors.toList()));
+    public List<SubjectBom> findAll(Boolean needToSort, String search) {
+        List<SubjectBom> result = subjectConverter.toBom(subjectRepo.findAll());
+        if (!search.isEmpty()) result = filterResult(result, search);
+        if (!needToSort) return result;
+        return result.stream().sorted(Comparator.comparing(SubjectBom::getName)).collect(Collectors.toList());
     }
 
     public SubjectBom create(SubjectBom subjectBom) {
@@ -47,5 +48,10 @@ public class SubjectServiceImpl implements CRUDService<SubjectBom> {
     public void delete(Long id) {
         Subject subject = subjectRepo.findById(id).orElseThrow(() -> new EntityNotFoundException(id));
         subjectRepo.delete(subject);
+    }
+
+    private List<SubjectBom> filterResult(List<SubjectBom> subjects, String search) {
+        return subjects.stream().filter(subject ->
+                subject.getName().contains(search)).collect(Collectors.toList());
     }
 }

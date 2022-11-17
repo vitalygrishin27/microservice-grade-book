@@ -44,27 +44,27 @@ public class UserController {
     }
 
     @GetMapping
-    public ResponseEntity<List<UserBom>> getUsers(@NotNull @RequestAttribute AccessLevel.LEVEL level, @RequestParam(defaultValue = "true") Boolean needToSort) {
+    public ResponseEntity<List<UserBom>> getUsers(@NotNull @RequestAttribute AccessLevel.LEVEL level, @RequestParam(defaultValue = "true") Boolean needToSort, String search) {
         if (!AccessLevel.LEVEL.ADMIN.equals(level)) throw new ForbiddenByAccessLevelException();
-        return new ResponseEntity<>(userService.findAll(needToSort), HttpStatus.OK);
+        return new ResponseEntity<>(userService.findAll(needToSort, search), HttpStatus.OK);
     }
 
     @GetMapping("/pupils")
-    public ResponseEntity<List<UserBom>> getPupils(@NotNull @RequestAttribute AccessLevel.LEVEL level, @RequestParam(defaultValue = "true") Boolean needToSort) {
+    public ResponseEntity<List<UserBom>> getPupils(@NotNull @RequestAttribute AccessLevel.LEVEL level, @RequestParam(defaultValue = "true") Boolean needToSort, String search) {
         if (!AccessLevel.LEVEL.ADMIN.equals(level)) throw new ForbiddenByAccessLevelException();
-        return new ResponseEntity<>(userService.findAll(AccessLevel.LEVEL.PUPIL, needToSort), HttpStatus.OK);
+        return new ResponseEntity<>(userService.findAll(AccessLevel.LEVEL.PUPIL, needToSort, search), HttpStatus.OK);
     }
 
     @GetMapping("/teachers")
-    public ResponseEntity<List<UserBom>> getTeachers(@NotNull @RequestAttribute AccessLevel.LEVEL level, @RequestParam(defaultValue = "true") Boolean needToSort) {
+    public ResponseEntity<List<UserBom>> getTeachers(@NotNull @RequestAttribute AccessLevel.LEVEL level, @RequestParam(defaultValue = "true") Boolean needToSort, String search) {
         if (!AccessLevel.LEVEL.ADMIN.equals(level)) throw new ForbiddenByAccessLevelException();
-        return new ResponseEntity<>(userService.findAll(AccessLevel.LEVEL.TEACHER, needToSort), HttpStatus.OK);
+        return new ResponseEntity<>(userService.findAll(AccessLevel.LEVEL.TEACHER, needToSort, search), HttpStatus.OK);
     }
 
     @GetMapping("/admins")
-    public ResponseEntity<List<UserBom>> getWatchers(@NotNull @RequestAttribute AccessLevel.LEVEL level, @RequestParam(defaultValue = "true") Boolean needToSort) {
+    public ResponseEntity<List<UserBom>> getWatchers(@NotNull @RequestAttribute AccessLevel.LEVEL level, @RequestParam(defaultValue = "true") Boolean needToSort, String search) {
         if (!AccessLevel.LEVEL.ADMIN.equals(level)) throw new ForbiddenByAccessLevelException();
-        return new ResponseEntity<>(userService.findAll(AccessLevel.LEVEL.ADMIN, needToSort), HttpStatus.OK);
+        return new ResponseEntity<>(userService.findAll(AccessLevel.LEVEL.ADMIN, needToSort, search), HttpStatus.OK);
     }
 
     @GetMapping("/accessLevels")

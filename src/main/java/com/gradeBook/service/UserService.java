@@ -28,8 +28,9 @@ public class UserService {
     private final UserRepo userRepo;
     private final ClazzRepo clazzRepo;
 
-    public List<UserBom> findAll(Boolean needToSort) {
+    public List<UserBom> findAll(Boolean needToSort, String search) {
         List<UserBom> result = userConverter.toBom(userRepo.findAll());
+        if (!search.isEmpty()) result = filterResult(result, search);
         if (!needToSort) return result;
         return result.stream()
                 .sorted(Comparator.comparing(UserBom::getLastName)
@@ -37,8 +38,9 @@ public class UserService {
                         .thenComparing(UserBom::getSecondName)).collect(Collectors.toList());
     }
 
-    public List<UserBom> findAll(AccessLevel.LEVEL level, Boolean needToSort) {
+    public List<UserBom> findAll(AccessLevel.LEVEL level, Boolean needToSort, String search) {
         List<UserBom> result = userConverter.toBom(userRepo.findByAccessLevel_Level(level));
+        if (!search.isEmpty()) result = filterResult(result, search);
         if (!needToSort) return result;
         return result.stream()
                 .sorted(Comparator.comparing(UserBom::getLastName)
@@ -90,6 +92,14 @@ public class UserService {
 
     public boolean isPasswordMatch(String password, String encryptedPassword) {
         return new String(Base64.getDecoder().decode(encryptedPassword)).equals(password);
+    }
+
+    private List<UserBom> filterResult(List<UserBom> users, String search) {
+        return users.stream().filter(userBom ->
+                userBom.getLastName().contains(search) ||
+                        userBom.getFirstName().contains(search) ||
+                        userBom.getSecondName().contains(search) ||
+                        userBom.getLogin().contains(search)).collect(Collectors.toList());
     }
 
 }

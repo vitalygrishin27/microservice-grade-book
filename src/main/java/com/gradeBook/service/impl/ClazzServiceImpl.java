@@ -2,7 +2,6 @@ package com.gradeBook.service.impl;
 
 import com.gradeBook.converter.ClazzConverter;
 import com.gradeBook.entity.Clazz;
-import com.gradeBook.entity.Pupil;
 import com.gradeBook.entity.bom.ClazzBom;
 import com.gradeBook.exception.ClassHasPupilsException;
 import com.gradeBook.exception.EntityAlreadyExistsException;
@@ -28,10 +27,11 @@ public class ClazzServiceImpl implements CRUDService<ClazzBom> {
     private final PupilRepo pupilRepo;
     private final ClazzConverter clazzConverter;
 
-    public List<ClazzBom> findAll(Boolean needToSort) {
-        List<Clazz> result = clazzRepo.findAll();
-        if (!needToSort) return clazzConverter.toBom(result);
-        return clazzConverter.toBom(result.stream().sorted(Comparator.comparing(Clazz::getName)).collect(Collectors.toList()));
+    public List<ClazzBom> findAll(Boolean needToSort, String search) {
+        List<ClazzBom> result = clazzConverter.toBom(clazzRepo.findAll());
+        if (!search.isEmpty()) result = filterResult(result, search);
+        if (!needToSort) return result;
+        return result.stream().sorted(Comparator.comparing(ClazzBom::getName)).collect(Collectors.toList());
     }
 
     public ClazzBom findById(Long id) {
@@ -72,5 +72,10 @@ public class ClazzServiceImpl implements CRUDService<ClazzBom> {
         clazzBom.setName(clazzBom.getName().replace("в", "b"));
         clazzBom.setName(clazzBom.getName().replace("с", "c"));
         clazzBom.setName(clazzBom.getName().replace("е", "e"));
+    }
+
+    private List<ClazzBom> filterResult(List<ClazzBom> clazzes, String search) {
+        return clazzes.stream().filter(clazz ->
+                clazz.getName().contains(search)).collect(Collectors.toList());
     }
 }

@@ -21,9 +21,9 @@ public class ClazzController {
     private final CRUDService<ClazzBom> сlazzService;
 
     @GetMapping
-    public ResponseEntity<List<ClazzBom>> getClasses(@RequestAttribute AccessLevel.LEVEL level, @RequestParam(defaultValue = "true") Boolean needToSort) {
+    public ResponseEntity<List<ClazzBom>> getClasses(@RequestAttribute AccessLevel.LEVEL level, @RequestParam(defaultValue = "true") Boolean needToSort, String search) {
         if (!AccessLevel.LEVEL.ADMIN.equals(level)) throw new ForbiddenByAccessLevelException();
-        return new ResponseEntity<>(сlazzService.findAll(needToSort), HttpStatus.OK);
+        return new ResponseEntity<>(сlazzService.findAll(needToSort, search), HttpStatus.OK);
     }
 
     @PostMapping

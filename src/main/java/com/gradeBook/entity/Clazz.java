@@ -18,7 +18,7 @@ public class Clazz {
     @GeneratedValue
     private Long OID;
     private String name;
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne
     @JoinColumn(name="FK_TEACHER_FORM_MASTER_OID", referencedColumnName = "OID")
     private Teacher formMaster;
     @ManyToMany(mappedBy = "classes")

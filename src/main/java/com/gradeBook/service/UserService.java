@@ -99,7 +99,8 @@ public class UserService {
                 userBom.getLastName().contains(search) ||
                         userBom.getFirstName().contains(search) ||
                         userBom.getSecondName().contains(search) ||
-                        userBom.getLogin().contains(search)).collect(Collectors.toList());
+                        userBom.getLogin().contains(search) ||
+                        (userBom.getClazz() != null && userBom.getClazz().getName().contains(search))).collect(Collectors.toList());
     }
 
 }

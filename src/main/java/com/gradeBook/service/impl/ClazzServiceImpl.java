@@ -76,6 +76,6 @@ public class ClazzServiceImpl implements CRUDService<ClazzBom> {
 
     private List<ClazzBom> filterResult(List<ClazzBom> clazzes, String search) {
         return clazzes.stream().filter(clazz ->
-                clazz.getName().contains(search)).collect(Collectors.toList());
+                clazz.getName().toLowerCase().contains(search.toLowerCase())).collect(Collectors.toList());
     }
 }

@@ -96,11 +96,11 @@ public class UserService {
 
     private List<UserBom> filterResult(List<UserBom> users, String search) {
         return users.stream().filter(userBom ->
-                userBom.getLastName().contains(search) ||
-                        userBom.getFirstName().contains(search) ||
-                        userBom.getSecondName().contains(search) ||
-                        userBom.getLogin().contains(search) ||
-                        (userBom.getClazz() != null && userBom.getClazz().getName().contains(search))).collect(Collectors.toList());
+                userBom.getLastName().toLowerCase().contains(search.toLowerCase()) ||
+                        userBom.getFirstName().toLowerCase().contains(search.toLowerCase()) ||
+                        userBom.getSecondName().toLowerCase().contains(search.toLowerCase()) ||
+                        userBom.getLogin().toLowerCase().contains(search.toLowerCase()) ||
+                        (userBom.getClazz() != null && userBom.getClazz().getName().toLowerCase().contains(search.toLowerCase()))).collect(Collectors.toList());
     }
 
 }

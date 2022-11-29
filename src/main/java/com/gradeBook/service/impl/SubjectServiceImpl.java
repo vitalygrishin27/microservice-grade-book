@@ -52,6 +52,6 @@ public class SubjectServiceImpl implements CRUDService<SubjectBom> {
 
     private List<SubjectBom> filterResult(List<SubjectBom> subjects, String search) {
         return subjects.stream().filter(subject ->
-                subject.getName().contains(search)).collect(Collectors.toList());
+                subject.getName().toLowerCase().contains(search.toLowerCase())).collect(Collectors.toList());
     }
 }

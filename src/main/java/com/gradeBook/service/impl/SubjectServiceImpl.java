@@ -31,14 +31,14 @@ public class SubjectServiceImpl implements CRUDService<SubjectBom> {
     }
 
     public SubjectBom create(SubjectBom subjectBom) {
-        if (subjectBom.getName().equals("")) throw new EntityIsInvalidException();
+        if (subjectBom.getName().isBlank()) throw new EntityIsInvalidException();
         if (subjectRepo.findByName(subjectBom.getName()) != null)
             throw new EntityAlreadyExistsException(subjectBom.getName());
         return subjectConverter.toBom(subjectRepo.saveAndFlush(subjectConverter.fromBom(subjectBom)));
     }
 
     public SubjectBom update(SubjectBom subjectBom) {
-        if (subjectBom.getName().equals("")) throw new EntityIsInvalidException();
+        if (subjectBom.getName().isBlank()) throw new EntityIsInvalidException();
         Subject subjectFromDB = subjectRepo.findByName(subjectBom.getName());
         if (subjectFromDB != null && !Objects.equals(subjectFromDB.getOID(), subjectBom.getOID()))
             throw new EntityAlreadyExistsException(subjectBom.getName());

@@ -7,6 +7,7 @@ import com.gradeBook.entity.Teacher;
 import com.gradeBook.entity.User;
 import com.gradeBook.entity.bom.UserBom;
 import com.gradeBook.exception.EntityAlreadyExistsException;
+import com.gradeBook.exception.EntityIsInvalidException;
 import com.gradeBook.exception.InvalidUserPasswordException;
 import com.gradeBook.exception.UserNotFoundException;
 import com.gradeBook.repository.ClazzRepo;
@@ -49,12 +50,14 @@ public class UserService {
     }
 
     public UserBom create(UserBom userBom) {
+        checkFieldsForBlanks(userBom);
         if (userRepo.findByLogin(userBom.getLogin()).isPresent())
             throw new EntityAlreadyExistsException(userBom.getLogin());
         return userConverter.toBom(userRepo.saveAndFlush(userConverter.fromBom(userBom)));
     }
 
     public UserBom update(UserBom updatedUserBom) {
+        checkFieldsForBlanks(updatedUserBom);
         Optional<User> userWithSameLogin = userRepo.findByLogin(updatedUserBom.getLogin());
         if (userWithSameLogin.isPresent() && !userWithSameLogin.get().getOID().equals(updatedUserBom.getOID()))
             throw new UserNotFoundException(updatedUserBom.getLogin());
@@ -103,4 +106,11 @@ public class UserService {
                         (userBom.getClazz() != null && userBom.getClazz().getName().toLowerCase().contains(search.toLowerCase()))).collect(Collectors.toList());
     }
 
+    private void checkFieldsForBlanks(UserBom userBom){
+        if (userBom.getLastName().isBlank() ||
+                userBom.getFirstName().isBlank() ||
+                userBom.getLogin().isBlank() ||
+                userBom.getPassword().isBlank())
+            throw new EntityIsInvalidException();
+    }
 }

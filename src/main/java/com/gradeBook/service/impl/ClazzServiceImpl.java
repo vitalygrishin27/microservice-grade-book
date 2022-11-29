@@ -41,7 +41,7 @@ public class ClazzServiceImpl implements CRUDService<ClazzBom> {
     }
 
     public ClazzBom create(ClazzBom clazzBom) {
-        if (clazzBom.getName().equals("")) throw new EntityIsInvalidException();
+        if (clazzBom.getName().isBlank()) throw new EntityIsInvalidException();
         replaceCyrillicSymbols(clazzBom);
         if (clazzRepo.findByName(clazzBom.getName()) != null)
             throw new EntityAlreadyExistsException(clazzBom.getName());
@@ -49,7 +49,7 @@ public class ClazzServiceImpl implements CRUDService<ClazzBom> {
     }
 
     public ClazzBom update(ClazzBom clazzBom) {
-        if (clazzBom.getName().equals("")) throw new EntityIsInvalidException();
+        if (clazzBom.getName().isBlank()) throw new EntityIsInvalidException();
         replaceCyrillicSymbols(clazzBom);
         Clazz clazzFromDB = clazzRepo.findByName(clazzBom.getName());
         if (clazzFromDB != null && !Objects.equals(clazzFromDB.getOID(), clazzBom.getOID()))

@@ -1,0 +1,19 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/gradebook
+    username: gradebook
+    password: Vitalygrishinq27$
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+    database-platform: org.hibernate.dialect.MySQL5Dialect
+  liquibase:
+    enabled: true
+    change-log: classpath:db/changelog/db.changelog.xml
+    password: Vitalygrishinq27$
+    user: gradebook
+maxUploadFileSizePlayerPhoto: 2000000
+app:
+  version: '@project.version@'

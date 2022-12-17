@@ -14,7 +14,7 @@ import java.util.Base64;
 @Service
 @RequiredArgsConstructor
 public class TokenService {
-    static final String TOKE_VALID_TIME = "TOKE_VALID_TIME";
+    static final String TOKEN_VALID_TIME = "TOKE_VALID_TIME";
     static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
     private static final SecureRandom secureRandom = new SecureRandom();
     private static final Base64.Encoder base64Encoder = Base64.getUrlEncoder();
@@ -38,7 +38,7 @@ public class TokenService {
         token.setUser(user);
         token.setAccessLevel(user.getAccessLevel().getLevel().toString());
         token.setFirstName(user.getFirstName());
-        token.setValidTo(LocalDateTime.now().plusMinutes(Long.parseLong(appSettingsService.findByName(TOKE_VALID_TIME).getValue())));
+        token.setValidTo(LocalDateTime.now().plusMinutes(Long.parseLong(appSettingsService.findByName(TOKEN_VALID_TIME).getValue())));
         save(token);
         return token;
     }

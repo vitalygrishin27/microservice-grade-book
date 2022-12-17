@@ -16,7 +16,7 @@
                 ADD PRIMARY KEY (`oid`);
 
             ALTER TABLE `lesson`
-                ADD COLUMN `fk_subject_oid` varchar(255) NOT NULL,
+                ADD COLUMN `fk_subject_oid` bigint(20) NOT NULL,
                 ADD KEY `FKli719dfayl6yctw3t2faj4cr7` (`fk_subject_oid`);
         </sql>
     </changeSet>

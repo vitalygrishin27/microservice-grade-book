@@ -20,10 +20,10 @@
                 `name`                       varchar(255) DEFAULT NULL,
                 `fk_teacher_form_master_oid` bigint(20) DEFAULT NULL
             );
-            CREATE TABLE `clazz_teachers`
+            CREATE TABLE `teachers_subjects`
             (
                 `teacher_oid` bigint(20) NOT NULL,
-                `clazz_oid`   bigint(20) NOT NULL
+                `subject_oid`   bigint(20) NOT NULL
             );
             CREATE TABLE `lesson`
             (
@@ -76,9 +76,9 @@
             ALTER TABLE `clazz`
                 ADD PRIMARY KEY (`oid`),
   ADD KEY `FKcbiakyv7wfqkta14udex3lc9y` (`fk_teacher_form_master_oid`);
-            ALTER TABLE `clazz_teachers`
-                ADD PRIMARY KEY (`teacher_oid`, `clazz_oid`),
-  ADD KEY `FKd90vbdh7cyxiu3kx0wunth0wp` (`clazz_oid`);
+            ALTER TABLE `teachers_subjects`
+                ADD PRIMARY KEY (`teacher_oid`, `subject_oid`),
+  ADD KEY `FKd90vbdh7cyxiu3kx0wunth0wp` (`subject_oid`);
             ALTER TABLE `lesson`
                 ADD PRIMARY KEY (`oid`),
   ADD KEY `FKiee36qxpu0o0ehck2f5fk9h0g` (`fk_clazz_oid`),

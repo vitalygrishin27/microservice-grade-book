@@ -21,6 +21,7 @@ public class SubjectConverter {
         SubjectBom result = new SubjectBom();
         result.setOID(source.getOID());
         result.setName(source.getName());
+        result.setSchedulerInternalId(source.getName());
         return result;
     }
 

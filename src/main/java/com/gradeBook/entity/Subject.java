@@ -21,4 +21,6 @@ public class Subject {
     @OneToMany(mappedBy = "subject")
     @JsonIgnore
     private Set<Lesson> lessons;
+    @ManyToMany(mappedBy = "subjects")
+    Set<Teacher> teachers;
 }

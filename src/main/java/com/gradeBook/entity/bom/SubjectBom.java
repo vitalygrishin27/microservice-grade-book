@@ -10,4 +10,5 @@ import lombok.NoArgsConstructor;
 public class SubjectBom {
     private Long OID;
     private String name;
+    private String schedulerInternalId;
 }

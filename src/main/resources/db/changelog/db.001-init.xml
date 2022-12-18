@@ -23,12 +23,13 @@
             CREATE TABLE `teachers_subjects`
             (
                 `teacher_oid` bigint(20) NOT NULL,
-                `subject_oid`   bigint(20) NOT NULL
+                `subject_oid` bigint(20) NOT NULL
             );
             CREATE TABLE `lesson`
             (
                 `oid`            bigint(20) NOT NULL,
-                `name`           varchar(255) DEFAULT NULL,
+                `day_of_week`    varchar(255) DEFAULT NULL,
+                `order_number`   integer      DEFAULT NULL,
                 `fk_clazz_oid`   bigint(20) DEFAULT NULL,
                 `fk_teacher_oid` bigint(20) DEFAULT NULL
             );
@@ -51,19 +52,19 @@
             );
             CREATE TABLE `token`
             (
-                `oid`                 bigint(20) NOT NULL,
-                `token`               varchar(255) DEFAULT NULL,
-                `valid_to`            datetime     DEFAULT NULL,
-                `fk_user_oid`         bigint(20) DEFAULT NULL
+                `oid`         bigint(20) NOT NULL,
+                `token`       varchar(255) DEFAULT NULL,
+                `valid_to`    datetime     DEFAULT NULL,
+                `fk_user_oid` bigint(20) DEFAULT NULL
             );
             CREATE TABLE `user_data`
             (
-                `oid`         bigint(20) NOT NULL,
-                `first_name`  varchar(255) DEFAULT NULL,
-                `last_name`   varchar(255) DEFAULT NULL,
-                `second_name` varchar(255) DEFAULT NULL,
-                `login` varchar(255) DEFAULT NULL,
-                `password` varchar(255) DEFAULT NULL,
+                `oid`                 bigint(20) NOT NULL,
+                `first_name`          varchar(255) DEFAULT NULL,
+                `last_name`           varchar(255) DEFAULT NULL,
+                `second_name`         varchar(255) DEFAULT NULL,
+                `login`               varchar(255) DEFAULT NULL,
+                `password`            varchar(255) DEFAULT NULL,
                 `fk_access_level_oid` bigint(20) DEFAULT NULL
             );
             CREATE TABLE `watcher`

@@ -40,6 +40,11 @@ public class ClazzServiceImpl implements CRUDService<ClazzBom> {
         return clazzConverter.toBom(clazzOptional.get());
     }
 
+    public Clazz findClazzById(Long id) {
+        Optional<Clazz> clazzOptional = clazzRepo.findById(id);
+        return clazzOptional.orElse(null);
+    }
+
     public ClazzBom create(ClazzBom clazzBom) {
         if (clazzBom.getName().isBlank()) throw new EntityIsInvalidException();
         replaceCyrillicSymbols(clazzBom);

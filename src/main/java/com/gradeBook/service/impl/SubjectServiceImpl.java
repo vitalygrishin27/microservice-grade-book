@@ -50,6 +50,10 @@ public class SubjectServiceImpl implements CRUDService<SubjectBom> {
         subjectRepo.delete(subject);
     }
 
+    public Subject findById(Long id) {
+        return subjectRepo.findById(id).orElse(null);
+    }
+
     private List<SubjectBom> filterResult(List<SubjectBom> subjects, String search) {
         return subjects.stream().filter(subject ->
                 subject.getName().toLowerCase().contains(search.toLowerCase())).collect(Collectors.toList());

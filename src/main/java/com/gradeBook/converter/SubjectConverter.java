@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -21,7 +22,7 @@ public class SubjectConverter {
         SubjectBom result = new SubjectBom();
         result.setOID(source.getOID());
         result.setName(source.getName());
-        result.setSchedulerInternalId(source.getName());
+        result.setSchedulerInternalId(UUID.randomUUID().toString());
         return result;
     }
 

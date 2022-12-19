@@ -9,14 +9,12 @@ import com.gradeBook.exception.UserNotFoundException;
 import com.gradeBook.repository.ClazzRepo;
 import com.gradeBook.repository.UserRepo;
 import com.gradeBook.service.AccessLevelService;
+import com.gradeBook.service.impl.SubjectServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
-import static com.gradeBook.entity.AccessLevel.LEVEL.ADMIN;
 import static com.gradeBook.service.UserService.encryptPassword;
 
 @Service
@@ -26,6 +24,7 @@ public class UserConverter {
     private final ClazzConverter clazzConverter;
     private final UserRepo userRepo;
     private final ClazzRepo clazzRepo;
+    private final SubjectServiceImpl subjectService;
 
     public UserBom toBom(User source) {
         if (source == null) return null;
@@ -41,9 +40,11 @@ public class UserConverter {
         if (source instanceof Pupil)
             result.setClazz(clazzConverter.toBom(((Pupil) source).getClazz()));
 
-        if (source instanceof Teacher)
+        if (source instanceof Teacher) {
             if ((((Teacher) source).getClassFormMaster() != null))
                 result.setClazz(clazzConverter.toBom(((Teacher) source).getClassFormMaster()));
+            ((Teacher) source).getSubjects().forEach(subject -> result.getSelectedSubjects().add(subject.getOID()));
+        }
 
         return result;
     }
@@ -70,9 +71,13 @@ public class UserConverter {
                         ((Teacher) result).setClassFormMaster(null);
                         clazz.setFormMaster(null);
                     }
+                    Set<Subject> subjects = new HashSet<>();
+                    source.getSelectedSubjects().forEach(subjectOid -> {
+                        subjects.add(subjectService.findById(subjectOid));
+                    });
+                    ((Teacher) result).setSubjects(subjects);
                 } else {
                     result = new Teacher();
-
                 }
                 if (source.getClazz() != null && source.getClazz().getOID() != null) {
                     Optional<Clazz> optionalClazz = clazzRepo.findById(source.getClazz().getOID());

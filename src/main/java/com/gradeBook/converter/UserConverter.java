@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static com.gradeBook.entity.AccessLevel.LEVEL.ADMIN;
 import static com.gradeBook.service.UserService.encryptPassword;
 
 @Service
@@ -94,6 +95,15 @@ public class UserConverter {
                 Optional<Clazz> optionalClazz = clazzRepo.findById(source.getClazz().getOID());
                 if (optionalClazz.isEmpty()) throw new EntityNotFoundException(source.getClazz().getOID());
                 ((Pupil) result).setClazz(optionalClazz.get());
+            }
+            case ADMIN -> {
+                if (source.getOID() != null) {
+                    Optional<User> optionalUser = userRepo.findById(source.getOID());
+                    if (optionalUser.isEmpty()) throw new EntityNotFoundException(source.getOID());
+                    result = optionalUser.get();
+                } else {
+                    result = new Watcher();
+                }
             }
             default -> result = new Watcher();
         }

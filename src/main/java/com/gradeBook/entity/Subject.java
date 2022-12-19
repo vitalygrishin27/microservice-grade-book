@@ -23,4 +23,12 @@ public class Subject {
     private Set<Lesson> lessons;
     @ManyToMany(mappedBy = "subjects")
     Set<Teacher> teachers;
+
+    @Override
+    public String toString() {
+        return "Subject{" +
+                "OID=" + OID +
+                ", name='" + name + '\'' +
+                '}';
+    }
 }

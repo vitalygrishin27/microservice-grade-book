@@ -68,17 +68,16 @@ public class SchedulerService {
                     .sorted(Comparator.comparing(Lesson::getOrderNumber)).toList();
             SubjectBom[] subjectBomArray;
             subjectBomArray = new SubjectBom[filteredList.size() > 0 ? filteredList.get(filteredList.size() - 1).getOrderNumber() : 0];
-            filteredList.forEach(lesson -> {
-                for (int i = 0; i < subjectBomArray.length; i++) {
-                    if (i == lesson.getOrderNumber() - 1) {
-                        subjectBomArray[i] = subjectConverter.toBom(lesson.getSubject());
-                    } else {
-                        subjectBomArray[i] = new SubjectBom(null, "Free", UUID.randomUUID().toString());
-                    }
-                }
 
-            });
+            for (int i = 0; i < subjectBomArray.length; i++) {
 
+                int finalI = i;
+                int finalI1 = i;
+                subjectBomArray[i] = filteredList.stream().anyMatch(lesson -> (lesson.getOrderNumber() - 1) == finalI) ?
+                        subjectConverter.toBom(filteredList.stream().filter(lesson -> (lesson.getOrderNumber() - 1 == finalI1)).findFirst().get().getSubject()) :
+                        new SubjectBom(null, "Free", UUID.randomUUID().toString());
+
+            }
             map1.put("items", Arrays.stream(subjectBomArray).toList());
             list.add(map1);
         });

@@ -24,4 +24,13 @@ public class Mark {
     @ManyToOne
     @JoinColumn(name="FK_LESSON_OID")
     private Lesson lesson;
+
+    @Override
+    public String toString() {
+        return "Mark{" +
+                "OID=" + OID +
+                ", value=" + value +
+                ", localDateTime=" + localDateTime +
+                '}';
+    }
 }

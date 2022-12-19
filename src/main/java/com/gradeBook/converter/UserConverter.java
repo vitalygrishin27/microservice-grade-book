@@ -71,11 +71,6 @@ public class UserConverter {
                         ((Teacher) result).setClassFormMaster(null);
                         clazz.setFormMaster(null);
                     }
-                    Set<Subject> subjects = new HashSet<>();
-                    source.getSelectedSubjects().forEach(subjectOid -> {
-                        subjects.add(subjectService.findById(subjectOid));
-                    });
-                    ((Teacher) result).setSubjects(subjects);
                 } else {
                     result = new Teacher();
                 }
@@ -87,6 +82,11 @@ public class UserConverter {
                     ((Teacher) result).setClassFormMaster(optionalClazz.get());
                     optionalClazz.get().setFormMaster((Teacher) result);
                 }
+                Set<Subject> subjects = new HashSet<>();
+                source.getSelectedSubjects().forEach(subjectOid -> {
+                    subjects.add(subjectService.findById(subjectOid));
+                });
+                ((Teacher) result).setSubjects(subjects);
             }
             case PUPIL -> {
                 if (source.getOID() != null) {

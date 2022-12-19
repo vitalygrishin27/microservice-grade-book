@@ -17,3 +17,5 @@ spring:
 maxUploadFileSizePlayerPhoto: 2000000
 app:
   version: '@project.version@'
+server:
+  port: 1234

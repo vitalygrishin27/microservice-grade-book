@@ -18,7 +18,17 @@ public class Subject {
     @GeneratedValue
     private Long OID;
     private String name;
-    @OneToMany(mappedBy = "subject")
+  /*  @OneToMany(mappedBy = "subject")
     @JsonIgnore
-    private Set<Lesson> lessons;
+    private Set<Lesson> lessons;*/
+   /* @ManyToMany(mappedBy = "subjects")
+    Set<Teacher> teachers;*/
+
+    @Override
+    public String toString() {
+        return "Subject{" +
+                "OID=" + OID +
+                ", name='" + name + '\'' +
+                '}';
+    }
 }

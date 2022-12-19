@@ -6,15 +6,14 @@ import com.gradeBook.entity.Clazz;
 import com.gradeBook.entity.Teacher;
 import com.gradeBook.entity.User;
 import com.gradeBook.entity.bom.UserBom;
-import com.gradeBook.exception.EntityAlreadyExistsException;
-import com.gradeBook.exception.EntityIsInvalidException;
-import com.gradeBook.exception.InvalidUserPasswordException;
-import com.gradeBook.exception.UserNotFoundException;
+import com.gradeBook.exception.*;
 import com.gradeBook.repository.ClazzRepo;
 import com.gradeBook.repository.UserRepo;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.Base64;
 import java.util.Comparator;
 import java.util.List;
@@ -67,6 +66,7 @@ public class UserService {
         return userConverter.toBom(userRepo.saveAndFlush(userConverter.fromBom(updatedUserBom)));
     }
 
+    @Transactional
     public void delete(Long userId) {
         Optional<User> userOptional = userRepo.findById(userId);
         if (userOptional.isEmpty()) return;
@@ -74,9 +74,13 @@ public class UserService {
             Clazz clazz = ((Teacher) userOptional.get()).getClassFormMaster();
             ((Teacher) userOptional.get()).setClassFormMaster(null);
             clazz.setFormMaster(null);
-            clazzRepo.saveAndFlush(clazz);
+            clazzRepo.save(clazz);
         }
-        userRepo.delete(userOptional.get());
+        try {
+            userRepo.delete(userOptional.get());
+        } catch (DataIntegrityViolationException e) {
+            throw new EntityHasDependencyException();
+        }
     }
 
     private User findByLogin(String login) {
@@ -106,7 +110,7 @@ public class UserService {
                         (userBom.getClazz() != null && userBom.getClazz().getName().toLowerCase().contains(search.toLowerCase()))).collect(Collectors.toList());
     }
 
-    private void checkFieldsForBlanks(UserBom userBom){
+    private void checkFieldsForBlanks(UserBom userBom) {
         if (userBom.getLastName().isBlank() ||
                 userBom.getFirstName().isBlank() ||
                 userBom.getLogin().isBlank() ||

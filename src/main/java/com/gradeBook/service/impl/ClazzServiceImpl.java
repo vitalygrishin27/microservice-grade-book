@@ -3,14 +3,12 @@ package com.gradeBook.service.impl;
 import com.gradeBook.converter.ClazzConverter;
 import com.gradeBook.entity.Clazz;
 import com.gradeBook.entity.bom.ClazzBom;
-import com.gradeBook.exception.ClassHasPupilsException;
-import com.gradeBook.exception.EntityAlreadyExistsException;
-import com.gradeBook.exception.EntityIsInvalidException;
-import com.gradeBook.exception.EntityNotFoundException;
+import com.gradeBook.exception.*;
 import com.gradeBook.repository.ClazzRepo;
 import com.gradeBook.repository.PupilRepo;
 import com.gradeBook.service.CRUDService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
@@ -40,6 +38,11 @@ public class ClazzServiceImpl implements CRUDService<ClazzBom> {
         return clazzConverter.toBom(clazzOptional.get());
     }
 
+    public Clazz findClazzById(Long id) {
+        Optional<Clazz> clazzOptional = clazzRepo.findById(id);
+        return clazzOptional.orElse(null);
+    }
+
     public ClazzBom create(ClazzBom clazzBom) {
         if (clazzBom.getName().isBlank()) throw new EntityIsInvalidException();
         replaceCyrillicSymbols(clazzBom);
@@ -60,7 +63,11 @@ public class ClazzServiceImpl implements CRUDService<ClazzBom> {
     public void delete(Long id) {
         Clazz clazz = clazzRepo.findById(id).orElseThrow(() -> new EntityNotFoundException(id));
         if (!pupilRepo.findByClazz(clazz).isEmpty()) throw new ClassHasPupilsException(clazz.getName());
-        clazzRepo.delete(clazz);
+        try {
+            clazzRepo.delete(clazz);
+        } catch (DataIntegrityViolationException e) {
+            throw new EntityHasDependencyException();
+        }
     }
 
     private void replaceCyrillicSymbols(ClazzBom clazzBom) {

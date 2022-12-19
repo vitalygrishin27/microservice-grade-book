@@ -21,8 +21,6 @@ public class Clazz {
     @OneToOne
     @JoinColumn(name="FK_TEACHER_FORM_MASTER_OID", referencedColumnName = "OID")
     private Teacher formMaster;
-    @ManyToMany(mappedBy = "classes")
-    Set<Teacher> teachers;
   /*  @OneToMany(mappedBy = "clazz")
     @JsonIgnore
     private Set<Pupil> pupils;*/

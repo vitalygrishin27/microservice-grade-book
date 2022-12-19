@@ -1,9 +1,9 @@
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://derff.mysql.tools/derff_gradebook?useSSL=false&useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false
-    username: derff_gradebook
-    password: nF@5Tg34f-
+    url: jdbc:mysql://localhost:3306/gradebook?useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false
+    username: gradebook
+    password: Vitalygrishinq27$
   jpa:
     show-sql: true
     hibernate:
@@ -12,10 +12,8 @@ spring:
   liquibase:
     enabled: true
     change-log: classpath:db/changelog/db.changelog.xml
-    password: nF@5Tg34f-
-    user: derff_gradebook
+    password: Vitalygrishinq27$
+    user: gradebook
 maxUploadFileSizePlayerPhoto: 2000000
 app:
   version: '@project.version@'
-server:
-  port: 1234

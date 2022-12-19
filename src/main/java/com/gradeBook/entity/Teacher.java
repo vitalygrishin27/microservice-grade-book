@@ -15,10 +15,10 @@ import java.util.Set;
 public class Teacher extends User {
     @ManyToMany
     @JoinTable(
-            name = "clazz_teachers",
+            name = "teachers_subjects",
             joinColumns = @JoinColumn(name = "TEACHER_OID"),
-            inverseJoinColumns = @JoinColumn(name = "CLAZZ_OID"))
-    Set<Clazz> classes;
+            inverseJoinColumns = @JoinColumn(name = "SUBJECT_OID"))
+    Set<Subject> subjects;
     @OneToMany(mappedBy = "teacher")
     private Set<Lesson> lessons;
     @OneToOne(mappedBy = "formMaster")

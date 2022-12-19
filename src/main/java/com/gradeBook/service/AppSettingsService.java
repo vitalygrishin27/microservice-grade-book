@@ -13,9 +13,9 @@ public class AppSettingsService {
 
     public AppSettings findByName(String name) {
         AppSettings appSettings = appSettingsRepo.findByName(name);
-        if (appSettings == null && TokenService.TOKE_VALID_TIME.equals(name)) {
+        if (appSettings == null && TokenService.TOKEN_VALID_TIME.equals(name)) {
             appSettings = new AppSettings();
-            appSettings.setName(TokenService.TOKE_VALID_TIME);
+            appSettings.setName(TokenService.TOKEN_VALID_TIME);
             appSettings.setDescription("Time for expiring token in minutes");
             appSettings.setValue("5");
             appSettings = save(appSettings);

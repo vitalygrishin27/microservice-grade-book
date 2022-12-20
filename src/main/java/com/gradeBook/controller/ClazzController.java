@@ -23,32 +23,32 @@ import java.util.List;
 public class ClazzController {
 
     private final CRUDService<ClazzBom> clazzService;
-    private static final String LOG_MESSAGE_TEMPLATE = "[ClazzController.%s] [%s] [Access level = %s] [Login = %s] [Parameters: %s]";
+    private static final String LOG_MESSAGE_TEMPLATE = "[%s] [Access level = %s] [Login = %s] [Parameters: %s]";
 
     @GetMapping
     public ResponseEntity<List<ClazzBom>> getClasses(@RequestAttribute AccessLevel.LEVEL level, @RequestAttribute Token token, @RequestParam(defaultValue = "true") Boolean needToSort, String search) {
-        log.info(String.format(LOG_MESSAGE_TEMPLATE, "getClasses", LocalDateTime.now(), level, token != null ? token.getUser().getLogin() : "Undefined", "needToSort=" + needToSort + ", search=" + search));
+        log.info(String.format(LOG_MESSAGE_TEMPLATE, "getClasses", level, token != null ? token.getUser().getLogin() : "Undefined", "needToSort=" + needToSort + ", search=" + search));
         if (!AccessLevel.LEVEL.ADMIN.equals(level)) throw new ForbiddenByAccessLevelException();
         return new ResponseEntity<>(clazzService.findAll(needToSort, search), HttpStatus.OK);
     }
 
     @PostMapping
     public ResponseEntity<ClazzBom> create(@NonNull @ModelAttribute ClazzBom clazzBom, @RequestAttribute Token token, @RequestAttribute AccessLevel.LEVEL level) {
-        log.info(String.format(LOG_MESSAGE_TEMPLATE, "create", LocalDateTime.now(), level, token != null ? token.getUser().getLogin() : "Undefined", clazzBom));
+        log.info(String.format(LOG_MESSAGE_TEMPLATE, "create", level, token != null ? token.getUser().getLogin() : "Undefined", clazzBom));
         if (!AccessLevel.LEVEL.ADMIN.equals(level)) throw new ForbiddenByAccessLevelException();
         return new ResponseEntity<>(clazzService.create(clazzBom), HttpStatus.CREATED);
     }
 
     @PutMapping
     public ResponseEntity<ClazzBom> update(@NonNull @ModelAttribute ClazzBom clazzBom, @RequestAttribute Token token, @RequestAttribute AccessLevel.LEVEL level) {
-        log.info(String.format(LOG_MESSAGE_TEMPLATE, "update", LocalDateTime.now(), level, token != null ? token.getUser().getLogin() : "Undefined", clazzBom));
+        log.info(String.format(LOG_MESSAGE_TEMPLATE, "update", level, token != null ? token.getUser().getLogin() : "Undefined", clazzBom));
         if (!AccessLevel.LEVEL.ADMIN.equals(level)) throw new ForbiddenByAccessLevelException();
         return new ResponseEntity<>(clazzService.update(clazzBom), HttpStatus.OK);
     }
 
     @DeleteMapping(value = "/{id}")
     public ResponseEntity<Object> delete(@NonNull @PathVariable() Long id, @RequestAttribute Token token, @RequestAttribute AccessLevel.LEVEL level) {
-        log.info(String.format(LOG_MESSAGE_TEMPLATE, "delete", LocalDateTime.now(), level, token != null ? token.getUser().getLogin() : "Undefined", id));
+        log.info(String.format(LOG_MESSAGE_TEMPLATE, "delete", level, token != null ? token.getUser().getLogin() : "Undefined", id));
         if (!AccessLevel.LEVEL.ADMIN.equals(level)) throw new ForbiddenByAccessLevelException();
         clazzService.delete(id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();

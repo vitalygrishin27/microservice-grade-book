@@ -22,11 +22,11 @@ public class CommonController {
     @Value("${app.version:unknown}")
     String version;
 
-    private static final String LOG_MESSAGE_TEMPLATE = "[CommonController.%s] [%s] [Response: %s]";
+    private static final String LOG_MESSAGE_TEMPLATE = "[%s] [Response: %s]";
 
     @GetMapping("/version")
     public ResponseEntity<String> getApplicationVersion() {
-        log.info(String.format(LOG_MESSAGE_TEMPLATE, "getApplicationVersion", LocalDateTime.now(), version));
+        log.info(String.format(LOG_MESSAGE_TEMPLATE, "getApplicationVersion", version));
         return new ResponseEntity<>(version, HttpStatus.OK);
     }
 

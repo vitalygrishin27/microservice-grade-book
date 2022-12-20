@@ -22,18 +22,18 @@ import java.time.LocalDateTime;
 public class SchedulerController {
 
     private final SchedulerService schedulerService;
-    private static final String LOG_MESSAGE_TEMPLATE = "[SchedulerController.%s] [%s] [Access level = %s] [Login = %s] [Parameters: %s]";
+    private static final String LOG_MESSAGE_TEMPLATE = "[%s] [Access level = %s] [Login = %s] [Parameters: %s]";
 
     @GetMapping("/classes/{id}")
     public ResponseEntity<SchedulerBom> getSchedulerByClass(@RequestAttribute AccessLevel.LEVEL level, @RequestAttribute Token token, @PathVariable() Long id) {
-        log.info(String.format(LOG_MESSAGE_TEMPLATE, "getSchedulerByClass", LocalDateTime.now(), level, token != null ? token.getUser().getLogin() : "Undefined", id));
+        log.info(String.format(LOG_MESSAGE_TEMPLATE, "getSchedulerByClass", level, token != null ? token.getUser().getLogin() : "Undefined", id));
         if (!AccessLevel.LEVEL.ADMIN.equals(level)) throw new ForbiddenByAccessLevelException();
         return new ResponseEntity<>(schedulerService.getScheduler(id), HttpStatus.OK);
     }
 
     @PostMapping
     public String create(@NonNull @RequestBody SchedulerBom schedulerBom, @RequestAttribute Token token, @RequestAttribute AccessLevel.LEVEL level) {
-        log.info(String.format(LOG_MESSAGE_TEMPLATE, "create", LocalDateTime.now(), level, token != null ? token.getUser().getLogin() : "Undefined", schedulerBom));
+        log.info(String.format(LOG_MESSAGE_TEMPLATE, "create", level, token != null ? token.getUser().getLogin() : "Undefined", schedulerBom));
         if (!AccessLevel.LEVEL.ADMIN.equals(level)) throw new ForbiddenByAccessLevelException();
         schedulerService.save(schedulerBom);
         return "Done";

@@ -28,7 +28,8 @@ public class SubjectController {
     @GetMapping
     public ResponseEntity<List<SubjectBom>> getSubjects(@RequestAttribute AccessLevel.LEVEL level, @RequestAttribute Token token, @RequestParam(defaultValue = "true") Boolean needToSort, String search) {
         log.info(String.format(LOG_MESSAGE_TEMPLATE, "getSubjects", level, token != null ? token.getUser().getLogin() : "Undefined", "needToSort=" + needToSort + ", search=" + search));
-        if (!AccessLevel.LEVEL.ADMIN.equals(level)) throw new ForbiddenByAccessLevelException();
+        if (!AccessLevel.LEVEL.ADMIN.equals(level) && !AccessLevel.LEVEL.TEACHER.equals(level))
+            throw new ForbiddenByAccessLevelException();
         return new ResponseEntity<>(CRUDService.findAll(needToSort, search), HttpStatus.OK);
     }
 

@@ -3,6 +3,7 @@ package com.gradeBook.controller;
 import com.gradeBook.entity.AccessLevel;
 import com.gradeBook.entity.Token;
 import com.gradeBook.entity.bom.SchedulerBom;
+import com.gradeBook.entity.bom.SchedulerItemBom;
 import com.gradeBook.exception.ForbiddenByAccessLevelException;
 import com.gradeBook.service.SchedulerService;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +14,9 @@ import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+
+import java.util.LinkedHashMap;
+import java.util.List;
 
 @CrossOrigin
 @RestController
@@ -37,6 +41,12 @@ public class SchedulerController {
         if (!AccessLevel.LEVEL.ADMIN.equals(level)) throw new ForbiddenByAccessLevelException();
         schedulerService.save(schedulerBom);
         return "Done";
+    }
+
+    @GetMapping("/teachers")
+    public ResponseEntity<LinkedHashMap<String, List<SchedulerItemBom>>> getSchedulerByTeacher(@RequestAttribute Token token, @RequestAttribute AccessLevel.LEVEL level) {
+        if (!AccessLevel.LEVEL.TEACHER.equals(level)) throw new ForbiddenByAccessLevelException();
+        return new ResponseEntity<>(schedulerService.getSchedulerByTeacher(token.getUser()), HttpStatus.OK);
     }
 
   /*  @PutMapping

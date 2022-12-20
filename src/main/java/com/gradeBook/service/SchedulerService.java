@@ -5,9 +5,9 @@ import com.gradeBook.converter.SubjectConverter;
 import com.gradeBook.converter.UserConverter;
 import com.gradeBook.entity.Clazz;
 import com.gradeBook.entity.Lesson;
+import com.gradeBook.entity.Teacher;
 import com.gradeBook.entity.User;
-import com.gradeBook.entity.bom.SchedulerBom;
-import com.gradeBook.entity.bom.SubjectBom;
+import com.gradeBook.entity.bom.*;
 import com.gradeBook.repository.LessonRepo;
 import com.gradeBook.service.impl.ClazzServiceImpl;
 import com.gradeBook.service.impl.SubjectServiceImpl;
@@ -100,6 +100,35 @@ public class SchedulerService {
 
         schedulerBom.setDaySchedulerBomList(list);
         return schedulerBom;
+    }
+
+    public LinkedHashMap<String, List<SchedulerItemBom>> getSchedulerByTeacher(User user) {
+        LinkedHashMap<String, List<SchedulerItemBom>> result = new LinkedHashMap<>();
+        Teacher teacher = (Teacher) user;
+        List<Lesson> lessons = lessonRepo.findByTeacher(teacher);
+        Arrays.stream(Lesson.DAY_OF_WEEK.values()).toList().forEach(day_of_week -> {
+
+            List<Lesson> filteredList = lessons.stream().filter(lesson -> lesson.getDayOfWeek().equals(day_of_week))
+                    .sorted(Comparator.comparing(Lesson::getOrderNumber)).toList();
+            SchedulerItemBom[] schedulerItems;
+            schedulerItems = new SchedulerItemBom[filteredList.size() > 0 ? filteredList.get(filteredList.size() - 1).getOrderNumber() : 0];
+
+            for (int i = 0; i < schedulerItems.length; i++) {
+
+                int finalI = i;
+                Optional<Lesson> optionalLesson = filteredList.stream().filter(lesson -> (lesson.getOrderNumber() - 1 == finalI)).findFirst();
+                if (optionalLesson.isEmpty()) {
+                    schedulerItems[i] = new SchedulerItemBom(new SubjectBom(null, "Free", UUID.randomUUID().toString(), new ArrayList<>(), null), null);
+                } else {
+                    Lesson lesson = optionalLesson.get();
+                    SubjectBom subjectBom = subjectConverter.toBom(lesson.getSubject());
+                    ClazzBom clazzBom = clazzConverter.toBom(lesson.getClazz());
+                    schedulerItems[i] = new SchedulerItemBom(subjectBom, clazzBom);
+                }
+            }
+            result.put(day_of_week.name(), Arrays.stream(schedulerItems).toList());
+        });
+        return result;
     }
 
 }

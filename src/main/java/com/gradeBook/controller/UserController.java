@@ -109,6 +109,7 @@ public class UserController {
         try {
             userService.delete(id);
         } catch (DataIntegrityViolationException e) {
+            log.error(String.format(LOG_MESSAGE_TEMPLATE, "delete", level, token != null ? token.getUser().getLogin() : "Undefined", e.getMessage()));
             throw new EntityHasDependencyException();
         }
 

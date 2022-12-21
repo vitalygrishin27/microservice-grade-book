@@ -1,16 +1,13 @@
 package com.gradeBook.service;
 
 import com.gradeBook.converter.UserConverter;
-import com.gradeBook.entity.AccessLevel;
-import com.gradeBook.entity.Clazz;
-import com.gradeBook.entity.Teacher;
-import com.gradeBook.entity.User;
+import com.gradeBook.entity.*;
 import com.gradeBook.entity.bom.UserBom;
 import com.gradeBook.exception.*;
 import com.gradeBook.repository.ClazzRepo;
+import com.gradeBook.repository.LessonRepo;
 import com.gradeBook.repository.UserRepo;
 import lombok.RequiredArgsConstructor;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -27,6 +24,7 @@ public class UserService {
 
     private final UserRepo userRepo;
     private final ClazzRepo clazzRepo;
+    private final LessonRepo lessonRepo;
 
     public List<UserBom> findAll(Boolean needToSort, String search) {
         List<UserBom> result = userConverter.toBom(userRepo.findAll());
@@ -63,6 +61,7 @@ public class UserService {
         Optional<User> userFromDBOptional = userRepo.findById(updatedUserBom.getOID());
         if (userFromDBOptional.isEmpty())
             throw new UserNotFoundException(updatedUserBom.getLogin() + "(id=" + updatedUserBom.getOID() + ")");
+        checkSchedulerForTeacher(userFromDBOptional.get(), updatedUserBom);
         return userConverter.toBom(userRepo.saveAndFlush(userConverter.fromBom(updatedUserBom)));
     }
 
@@ -76,11 +75,7 @@ public class UserService {
             clazz.setFormMaster(null);
             clazzRepo.save(clazz);
         }
-        try {
-            userRepo.delete(userOptional.get());
-        } catch (DataIntegrityViolationException e) {
-            throw new EntityHasDependencyException();
-        }
+        userRepo.delete(userOptional.get());
     }
 
     private User findByLogin(String login) {
@@ -116,5 +111,18 @@ public class UserService {
                 userBom.getLogin().isBlank() ||
                 userBom.getPassword().isBlank())
             throw new EntityIsInvalidException();
+    }
+
+    private void checkSchedulerForTeacher(User user, UserBom updatedUser) {
+        if (!(user instanceof Teacher teacher)) return;
+        List<Lesson> lessons = lessonRepo.findByTeacher(teacher);
+        if (!lessons.isEmpty() && updatedUser.getSelectedSubjects().size() == 0) {
+            throw new SchedulerHasDependencyException();
+        }
+        lessons.forEach(lesson -> {
+            if (!updatedUser.getSelectedSubjects().contains(lesson.getSubject().getOID())) {
+                throw new SchedulerHasDependencyException();
+            }
+        });
     }
 }

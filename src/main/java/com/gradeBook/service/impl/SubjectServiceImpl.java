@@ -4,15 +4,14 @@ import com.gradeBook.converter.SubjectConverter;
 import com.gradeBook.entity.Subject;
 import com.gradeBook.entity.bom.SubjectBom;
 import com.gradeBook.exception.EntityAlreadyExistsException;
-import com.gradeBook.exception.EntityHasDependencyException;
 import com.gradeBook.exception.EntityIsInvalidException;
 import com.gradeBook.exception.EntityNotFoundException;
 import com.gradeBook.repository.SubjectRepo;
 import com.gradeBook.service.CRUDService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
@@ -47,13 +46,10 @@ public class SubjectServiceImpl implements CRUDService<SubjectBom> {
         return subjectConverter.toBom(subjectRepo.saveAndFlush(subjectConverter.fromBom(subjectBom)));
     }
 
+    @Transactional
     public void delete(Long id) {
         Subject subject = subjectRepo.findById(id).orElseThrow(() -> new EntityNotFoundException(id));
-        try {
-            subjectRepo.delete(subject);
-        } catch (DataIntegrityViolationException e) {
-            throw new EntityHasDependencyException();
-        }
+        subjectRepo.delete(subject);
     }
 
     public Subject findById(Long id) {

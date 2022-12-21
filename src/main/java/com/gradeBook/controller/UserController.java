@@ -1,7 +1,10 @@
 package com.gradeBook.controller;
 
-import com.gradeBook.entity.*;
+import com.gradeBook.entity.AccessLevel;
+import com.gradeBook.entity.Token;
+import com.gradeBook.entity.Watcher;
 import com.gradeBook.entity.bom.UserBom;
+import com.gradeBook.exception.EntityHasDependencyException;
 import com.gradeBook.exception.ForbiddenByAccessLevelException;
 import com.gradeBook.repository.UserRepo;
 import com.gradeBook.service.AccessLevelService;
@@ -10,15 +13,14 @@ import com.gradeBook.service.UserService;
 import com.sun.istack.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @CrossOrigin
 @Controller
@@ -104,7 +106,12 @@ public class UserController {
     public ResponseEntity<Object> deleteUser(@PathVariable Long id, @NotNull @RequestAttribute AccessLevel.LEVEL level, @RequestAttribute Token token) {
         log.info(String.format(LOG_MESSAGE_TEMPLATE, "deleteUser", level, token != null ? token.getUser().getLogin() : "Undefined", id));
         if (!AccessLevel.LEVEL.ADMIN.equals(level)) throw new ForbiddenByAccessLevelException();
-        userService.delete(id);
+        try {
+            userService.delete(id);
+        } catch (DataIntegrityViolationException e) {
+            throw new EntityHasDependencyException();
+        }
+
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 

@@ -3,10 +3,7 @@ package com.gradeBook.service;
 import com.gradeBook.converter.ClazzConverter;
 import com.gradeBook.converter.SubjectConverter;
 import com.gradeBook.converter.UserConverter;
-import com.gradeBook.entity.Clazz;
-import com.gradeBook.entity.Lesson;
-import com.gradeBook.entity.Teacher;
-import com.gradeBook.entity.User;
+import com.gradeBook.entity.*;
 import com.gradeBook.entity.bom.*;
 import com.gradeBook.repository.LessonRepo;
 import com.gradeBook.service.impl.ClazzServiceImpl;
@@ -68,7 +65,7 @@ public class SchedulerService {
         subjectBoms.forEach(subjectBom -> {
             subjectBom.setTeachers(teacherService.findBySubjectBom(subjectBom));
         });
-        subjectBoms.add(new SubjectBom(null, "Free", "Free", new ArrayList<>(), null));
+        subjectBoms.add(new SubjectBom(null, "Free", "Free", new ArrayList<>(), null, null, null));
         map.put("items", subjectBoms);
         list.add(map);
         Arrays.stream(Lesson.DAY_OF_WEEK.values()).toList().forEach(day_of_week -> {
@@ -84,13 +81,24 @@ public class SchedulerService {
                 int finalI = i;
                 Optional<Lesson> optionalLesson = filteredList.stream().filter(lesson -> (lesson.getOrderNumber() - 1 == finalI)).findFirst();
                 if (optionalLesson.isEmpty()) {
-                    subjectBomArray[i] = new SubjectBom(null, "Free", UUID.randomUUID().toString(), new ArrayList<>(), null);
+                    subjectBomArray[i] = new SubjectBom(null, "Free", UUID.randomUUID().toString(), new ArrayList<>(), null, null, null);
                 } else {
                     Lesson lesson = optionalLesson.get();
                     SubjectBom subjectBom = subjectConverter.toBom(lesson.getSubject());
                     ArrayList<User> users = new ArrayList<>();
                     if (lesson.getTeacher() != null) users.add(lesson.getTeacher());
                     subjectBom.setTeachers(userConverter.toBom(users));
+                    List<SubjectBom> conflicts = new ArrayList<>();
+
+                    // TODO: 26.12.2022  change SubjectBom to LessonBom for conflicts
+                    lessonRepo.findByTeacherAndDayOfWeekAndOrderNumber(lesson.getTeacher(), lesson.getDayOfWeek(), lesson.getOrderNumber()).forEach(lesson1 -> {
+                        if(!Objects.equals(lesson1.getOID(), lesson.getOID())){
+                            SubjectBom subjectBom1 = subjectConverter.toBom(lesson1.getSubject());
+                            subjectBom1.setClazzWithConflict(clazzConverter.toBom(lesson1.getClazz()));
+                            conflicts.add(subjectBom1);
+                        }
+                    });
+                    subjectBom.setConflicts(conflicts);
                     subjectBomArray[i] = subjectBom;
                 }
             }
@@ -118,7 +126,8 @@ public class SchedulerService {
                 int finalI = i;
                 Optional<Lesson> optionalLesson = filteredList.stream().filter(lesson -> (lesson.getOrderNumber() - 1 == finalI)).findFirst();
                 if (optionalLesson.isEmpty()) {
-                    schedulerItems[i] = new SchedulerItemBom(new SubjectBom(null, "Free", UUID.randomUUID().toString(), new ArrayList<>(), null), null);
+                    // TODO: 26.12.2022 Resolve conflicts
+                    schedulerItems[i] = new SchedulerItemBom(new SubjectBom(null, "Free", UUID.randomUUID().toString(), new ArrayList<>(), null, null, null), null);
                 } else {
                     Lesson lesson = optionalLesson.get();
                     SubjectBom subjectBom = subjectConverter.toBom(lesson.getSubject());

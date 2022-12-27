@@ -36,11 +36,11 @@ public class SchedulerController {
     }
 
     @PostMapping
-    public String create(@NonNull @RequestBody SchedulerBom schedulerBom, @RequestAttribute Token token, @RequestAttribute AccessLevel.LEVEL level) {
+    public ResponseEntity<SchedulerBom> create(@NonNull @RequestBody SchedulerBom schedulerBom, @RequestAttribute Token token, @RequestAttribute AccessLevel.LEVEL level) {
         log.info(String.format(LOG_MESSAGE_TEMPLATE, "create", level, token != null ? token.getUser().getLogin() : "Undefined", schedulerBom));
         if (!AccessLevel.LEVEL.ADMIN.equals(level)) throw new ForbiddenByAccessLevelException();
         schedulerService.save(schedulerBom);
-        return "Done";
+        return new ResponseEntity<>(schedulerService.getScheduler(schedulerBom.getClazz().getOID()), HttpStatus.OK);
     }
 
     @GetMapping("/teachers")

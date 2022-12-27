@@ -18,6 +18,7 @@ public interface LessonRepo extends JpaRepository<Lesson, Long> {
 
     @Transactional
     @Modifying
-        //   @Query(value = "Delete from Lesson l where l.clazz = :clazz")
     void deleteByClazz(Clazz clazz);
+
+   List<Lesson> findByTeacherAndDayOfWeekAndOrderNumber(Teacher teacher, Lesson.DAY_OF_WEEK day_of_week, Integer orderNumber);
 }

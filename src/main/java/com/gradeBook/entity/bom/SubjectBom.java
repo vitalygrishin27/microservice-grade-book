@@ -16,4 +16,6 @@ public class SubjectBom {
     private String schedulerInternalId;
     private List<UserBom> teachers = new ArrayList<>();
     private Long selectedTeacher;
+    private List<SubjectBom> conflicts;
+    private ClazzBom clazzWithConflict;
 }

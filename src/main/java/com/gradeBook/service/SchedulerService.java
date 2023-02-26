@@ -18,14 +18,10 @@ import java.util.*;
 public class SchedulerService {
 
     private final SubjectServiceImpl subjectService;
-
     private final ClazzServiceImpl clazzService;
-
     private final ClazzConverter clazzConverter;
-
     private final SubjectConverter subjectConverter;
     private final UserConverter userConverter;
-
     private final LessonRepo lessonRepo;
     private final TeacherService teacherService;
 
@@ -92,7 +88,7 @@ public class SchedulerService {
 
                     // TODO: 26.12.2022  change SubjectBom to LessonBom for conflicts
                     lessonRepo.findByTeacherAndDayOfWeekAndOrderNumber(lesson.getTeacher(), lesson.getDayOfWeek(), lesson.getOrderNumber()).forEach(lesson1 -> {
-                        if(!Objects.equals(lesson1.getOID(), lesson.getOID())){
+                        if (!Objects.equals(lesson1.getOID(), lesson.getOID())) {
                             SubjectBom subjectBom1 = subjectConverter.toBom(lesson1.getSubject());
                             subjectBom1.setClazzWithConflict(clazzConverter.toBom(lesson1.getClazz()));
                             conflicts.add(subjectBom1);
@@ -140,4 +136,40 @@ public class SchedulerService {
         return result;
     }
 
+    public List<FullSchedulerBom> getFullScheduler() {
+        List<FullSchedulerBom> result = new ArrayList<>();
+        List<Teacher> teachers = teacherService.findAll();
+
+        teachers.forEach(teacher -> {
+            FullSchedulerBom fullSchedulerBom = new FullSchedulerBom();
+            fullSchedulerBom.setTeacherBom(userConverter.toBom(teacher));
+
+            List<Lesson> lessons = teacher.getLessons();
+            List<List<SchedulerItemBom>> listList = new ArrayList<>();
+            Arrays.stream(Lesson.DAY_OF_WEEK.values()).toList().forEach(day_of_week -> {
+                List<Lesson> filteredList = lessons.stream().filter(lesson -> lesson.getDayOfWeek().equals(day_of_week)).sorted(Comparator.comparing(Lesson::getOrderNumber)).toList();
+                // TODO: 26.02.2023  7 - count of lessons per day should be configurable
+                for (int i = 1; i < 8; i++) {
+                    List<SchedulerItemBom> list = new ArrayList<>();
+                    int finalI = i;
+                    List<Lesson> l1 = filteredList.stream().filter(lesson -> lesson.getOrderNumber() == finalI).toList();
+                    if (l1.isEmpty()) {
+                        list.add(new SchedulerItemBom());
+                    } else {
+                        l1.forEach(lesson -> {
+                            list.add(new SchedulerItemBom(
+                                    subjectConverter.toBom(lesson.getSubject()),
+                                    clazzConverter.toBom(lesson.getClazz())));
+                        });
+
+                    }
+                    listList.add(list);
+                }
+            });
+
+            fullSchedulerBom.setItemList(listList);
+            result.add(fullSchedulerBom);
+        });
+        return result;
+    }
 }

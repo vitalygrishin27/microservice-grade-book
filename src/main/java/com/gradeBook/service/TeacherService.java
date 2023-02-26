@@ -29,4 +29,8 @@ public class TeacherService {
     public Teacher findById(Long oid) {
         return teacherRepo.findById(oid).orElse(null);
     }
+
+    public List<Teacher> findAll() {
+        return teacherRepo.findAll();
+    }
 }

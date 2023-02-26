@@ -1,9 +1,12 @@
 package com.gradeBook.controller;
 
 import com.gradeBook.entity.AccessLevel;
+import com.gradeBook.entity.Teacher;
 import com.gradeBook.entity.Token;
+import com.gradeBook.entity.bom.FullSchedulerBom;
 import com.gradeBook.entity.bom.SchedulerBom;
 import com.gradeBook.entity.bom.SchedulerItemBom;
+import com.gradeBook.entity.bom.UserBom;
 import com.gradeBook.exception.ForbiddenByAccessLevelException;
 import com.gradeBook.service.SchedulerService;
 import lombok.RequiredArgsConstructor;
@@ -12,8 +15,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.*;
-
-import java.time.LocalDateTime;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -49,6 +50,11 @@ public class SchedulerController {
         return new ResponseEntity<>(schedulerService.getSchedulerByTeacher(token.getUser()), HttpStatus.OK);
     }
 
+    @GetMapping("/full")
+    public ResponseEntity<List<FullSchedulerBom>> getFullScheduler(@RequestAttribute Token token, @RequestAttribute AccessLevel.LEVEL level) {
+        if (!AccessLevel.LEVEL.ADMIN.equals(level)) throw new ForbiddenByAccessLevelException();
+        return new ResponseEntity<>(schedulerService.getFullScheduler(), HttpStatus.OK);
+    }
   /*  @PutMapping
     public ResponseEntity<SubjectBom> update(@NonNull @ModelAttribute SubjectBom subjectBom, @RequestAttribute AccessLevel.LEVEL level) {
         if (!AccessLevel.LEVEL.ADMIN.equals(level)) throw new ForbiddenByAccessLevelException();

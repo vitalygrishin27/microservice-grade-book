@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -20,7 +21,7 @@ public class Teacher extends User {
             inverseJoinColumns = @JoinColumn(name = "SUBJECT_OID"))
     Set<Subject> subjects;
     @OneToMany(mappedBy = "teacher")
-    private Set<Lesson> lessons;
+    private List<Lesson> lessons;
     @OneToOne(mappedBy = "formMaster")
     private Clazz classFormMaster;
 

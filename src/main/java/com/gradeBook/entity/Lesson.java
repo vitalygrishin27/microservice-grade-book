@@ -34,7 +34,7 @@ public class Lesson {
     private Set<Mark> marks;
 
     public enum DAY_OF_WEEK {
-        MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY
+        MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY
     }
 
     @Override
